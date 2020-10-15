@@ -249,7 +249,9 @@ public class RemoteFragment extends BaseFragment {
                                                     new Thread(new Runnable() {
                                                         @Override
                                                         public void run() {
-                                                            webHttpClientCom.getInstance(null).ThreadHttpCall("appRemote/"+ src.rid,null,"DELETE",null);
+                                                            byte[] data = null;
+                                                            String err = null;
+                                                            webHttpClientCom.getInstance(null).ThreadHttpCall("appRemote/"+ src.rid,null,"DELETE",data,err);
                                                         }
                                                     }).start();
                                                 }

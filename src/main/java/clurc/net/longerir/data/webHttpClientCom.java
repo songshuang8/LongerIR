@@ -62,7 +62,7 @@ public class webHttpClientCom {
 
     public interface RestOnWebPutEvent {
         void onSuc(byte[] out);
-        void onFail(boolean netfaulre,String res);
+        void onFail(String res);
     }
 
     public interface OnDownEventer {
@@ -150,8 +150,8 @@ public class webHttpClientCom {
         }).start();
     }
 
-    public String ThreadHttpCall(String urlparam, String body,String method,RestOnWebPutEvent aev) {
-        String ret = null;
+    public boolean ThreadHttpCall(String urlparam, String body,String method,byte[] result,String err) {
+        boolean ret = false;
         try {
             URL url = new URL(baseurl + urlparam);
             // 打开一个HttpURLConnection连接
@@ -190,19 +190,15 @@ public class webHttpClientCom {
                 }
                 Log.w(TAG_SS,"recv len = "+ bdata.length);
                 Log.w(TAG_SS,urlparam+"===>http code="+rescode+" body="+new String(bdata));
-                if(aev!=null)
-                    aev.onSuc(bdata);
-                ret = new String(bdata);
+                result = bdata;
+                ret = true;
             } else {
-                if(aev!=null)
-                    aev.onFail(false,"Error Code = " + rescode);
+                err ="Error Code = " + rescode;
                 Log.w(TAG_SS,urlparam+"===>http code="+rescode);
             }
             urlConn.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
-            if(aev!=null)
-                aev.onFail(true,e.getMessage());
             Log.w(TAG_SS,"===>http err="+e.getMessage());
         }
         return ret;
@@ -212,7 +208,13 @@ public class webHttpClientCom {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ThreadHttpCall(urlparam, body,method,aev);
+                String err = null;
+                byte[] data = null;
+                if(ThreadHttpCall(urlparam, body,method,data,err)){
+                    aev.onSuc(data);
+                }else{
+                    aev.onFail(err);
+                }
             }
         }).start();
     }
@@ -277,11 +279,11 @@ public class webHttpClientCom {
             }
 
             @Override
-            public void onFail(final boolean isnet,final String res) {
+            public void onFail(final String res) {
                 ((Activity)(context)).runOnUiThread(new Runnable() {
                     public void run() {
                         tipDialog.dismiss();
-                        if (isnet)
+                        if (res==null)
                             static_showMessage(getString(R.string.str_err), getString(R.string.str_err_net));
                         else
                         if (res != null && res.length() > 0)
@@ -293,7 +295,7 @@ public class webHttpClientCom {
     }
 
     //静默上传或覆盖我的遥控器
-    public boolean Slient_UploadRemote(RemoteInfo remote){
+    public boolean thread_UploadRemote(RemoteInfo remote){
         if(CfgData.userid<0)return true;
         List<BtnInfo> btnlist = CfgData.getBtnInfo(context,remote.id);
         if(remote.isAc!=CfgData.AcPro){
@@ -312,11 +314,12 @@ public class webHttpClientCom {
         }else{
             p = "appUpload?userid="+CfgData.userid;
         }
-        String res = ThreadHttpCall(p,txtstr,"POST",null);
-        if(res==null)return false;
+        byte[] data = null;
+        String err = null;
+        if(ThreadHttpCall(p,txtstr,"POST",data,err)==false)return false;
         if(remote.rid<1) {
             try {
-                JSONObject jsonObj = new JSONObject(res);
+                JSONObject jsonObj = new JSONObject(new String(data));
                 remote.rid = jsonObj.getInt("id");
                 CfgData.AppendoOrEditMyFile(context, remote, null);
                 return true;
@@ -369,11 +372,11 @@ public class webHttpClientCom {
             }
 
             @Override
-            public void onFail(final boolean netfaulre, final String res) {
+            public void onFail(final String res) {
                 context.runOnUiThread(new Runnable() {
                     public void run() {
                         tipDialog.dismiss();
-                        if (netfaulre)
+                        if (res==null)
                             static_showMessage( getString(R.string.str_err), getString(R.string.str_err_net));
                         else if (res != null && res.length() > 0)
                             static_showMessage( getString(R.string.str_err), res);
@@ -382,6 +385,7 @@ public class webHttpClientCom {
             }
         });
     }
+
     public void Rest_DownAndSaveMys(final RemoteInfo remote,String params, final  RestOnAppEvent aev){
         final List<TxtBtnInfo> txtbtns = new ArrayList<TxtBtnInfo>();
         Rest_DownRemote(remote, txtbtns, params, new RestOnAppEvent() {
@@ -397,6 +401,32 @@ public class webHttpClientCom {
                 }
             }
         });
+    }
+
+    public boolean thread_DownAndSaveMys(RemoteInfo remote,String params){
+        final List<TxtBtnInfo> txtbtns = new ArrayList<TxtBtnInfo>();
+        String err = null;
+        byte[] data = null;
+        if(!ThreadHttpCall(params, null,"GET",data,err))return false;
+        String errstr = "Unknown err";
+        boolean suc = false;
+        String res = new String(data);
+        if (QMUILangHelper.isNullOrEmpty(res)) return false;
+        if (remote.pp == null)
+            CfgData.GetRemoteFromText(remote, res);
+        remote.descname = remote.pp+"/"+remote.xh;
+        if (remote.isAc == CfgData.AcPro) {
+            remote.acdata = res;
+        } else {
+            CfgData.GetBtnsFromText(txtbtns, res);
+        }
+        List<BtnInfo> btns = new ArrayList<BtnInfo>();
+        CfgData.TransTxtToBtns(txtbtns, btns, remote.dev,remote.isAc);
+        if(CfgData.AppendoOrEditMyFile(context, remote, btns)) {
+            CfgData.myremotelist.add(remote);
+            return true;
+        }
+        return false;
     }
 
     //下载遥控器数据 品牌 型号从json里面取
@@ -468,11 +498,11 @@ public class webHttpClientCom {
             }
 
             @Override
-            public void onFail(final boolean netfaulre, final String res) {
+            public void onFail(final String res) {
                 context.runOnUiThread(new Runnable() {
                     public void run() {
                         tipDialog.dismiss();
-                        if (netfaulre)
+                        if (res==null)
                             static_showMessage( getString(R.string.str_err), getString(R.string.str_err_net));
                         else if (res != null && res.length() > 0)
                             static_showMessage( getString(R.string.str_err), res);
@@ -495,36 +525,31 @@ public class webHttpClientCom {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                byte[] data=null;
                 ///开始调用主转换函数
                 Log.w(TAG_SS, "芯片类型："+chip);
                 //
                 String s = CfgData.getButtonsString(buttons);
                 Log.w(TAG_SS,"===>eep sorce:"+s+";"+chip+","+0);
-                ThreadHttpCall("getTransEep?chip=" + chip + "&force=0", s, "POST", new RestOnWebPutEvent() {
-                    @Override
-                    public void onSuc(final byte[] out) {
-                        context.runOnUiThread(new Runnable() {
-                            public void run() {
-                                tipDialog.dismiss();
-                                aev.onSuc(out);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFail(final boolean netfaulre,final String res) {
-                        context.runOnUiThread(new Runnable() {
-                            public void run() {
-                                tipDialog.dismiss();
-                                if (netfaulre)
-                                    static_showMessage( getString(R.string.str_err), getString(R.string.str_err_net));
-                                else if (res != null && res.length() > 0)
-                                    static_showMessage( getString(R.string.str_err), res);
-                            }
-                        });
-                    }
-                });
+                final String err = null;
+                final byte[] data = null;
+                if(ThreadHttpCall("getTransEep?chip=" + chip + "&force=0", s, "POST", data,err)==false) {
+                    context.runOnUiThread(new Runnable() {
+                        public void run() {
+                            tipDialog.dismiss();
+                            aev.onSuc(data);
+                        }
+                    });
+                }else{
+                    context.runOnUiThread(new Runnable() {
+                        public void run() {
+                            tipDialog.dismiss();
+                            if (err==null)
+                                static_showMessage( getString(R.string.str_err), getString(R.string.str_err_net));
+                            else if (err.length() > 0)
+                                static_showMessage( getString(R.string.str_err), err);
+                        }
+                    });
+                }
             }
         }).start();
     }

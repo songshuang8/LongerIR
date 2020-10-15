@@ -43,6 +43,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import clurc.net.longerir.R;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
+import clurc.net.longerir.data.RemoteInfo;
 import clurc.net.longerir.data.webHttpClientCom;
 
 import static clurc.net.longerir.manager.UiUtils.getString;
@@ -225,7 +226,7 @@ public class UserCenter extends BaseActivity {
                     }
 
                     @Override
-                    public void onFail(boolean netfaulre, String res) {
+                    public void onFail(String res) {
                         if(res!=null && res.length()>0)
                             Log.w(TAG_SS,res);
                     }
@@ -268,7 +269,7 @@ public class UserCenter extends BaseActivity {
                 for (int i = 0; i < CfgData.myremotelist.size(); i++) {
                     if(isInterrupted())return;
                     if(CfgData.myremotelist.get(i).rid<1)
-                        webHttpClientCom.getInstance(UserCenter.this).Slient_UploadRemote(CfgData.myremotelist.get(i));
+                        webHttpClientCom.getInstance(UserCenter.this).thread_UploadRemote(CfgData.myremotelist.get(i));
                 }
 
                 if(isInterrupted())return;
@@ -298,29 +299,32 @@ public class UserCenter extends BaseActivity {
 //                    e.printStackTrace();
 //                }
                 //pull
-                String res = webHttpClientCom.getInstance(UserCenter.this).ThreadHttpCall("appRemote?where=Author="+ CfgData.userid,null,"GET",null);
-                if(res==null)return;
-                if(isInterrupted())return;
-                try {
-                    JSONArray jsonAll = new JSONArray(res);
-                    for(int i=0;i<jsonAll.length();i++){
-                        JSONObject jsonsingle = (JSONObject)jsonAll.get(i);
-                        int aid = jsonsingle.getInt("ID");
-                        boolean localhas = false;
-                        for (int j = 0; j < CfgData.myremotelist.size(); j++) {
-                            if(CfgData.myremotelist.get(j).rid == aid){
-                                localhas = true;
-                                break;
+                byte[] data = null;
+                String err = null;
+                if(webHttpClientCom.getInstance(UserCenter.this).ThreadHttpCall("appRemote?where=Author="+ CfgData.userid,null,"GET",data,err)) {
+                    if (isInterrupted()) return;
+                    try {
+                        JSONArray jsonAll = new JSONArray(new String(data));
+                        for (int i = 0; i < jsonAll.length(); i++) {
+                            JSONObject jsonsingle = (JSONObject) jsonAll.get(i);
+                            int aid = jsonsingle.getInt("ID");
+                            boolean localhas = false;
+                            for (int j = 0; j < CfgData.myremotelist.size(); j++) {
+                                if (CfgData.myremotelist.get(j).rid == aid) {
+                                    localhas = true;
+                                    break;
+                                }
                             }
+                            if (!localhas) {
+                                RemoteInfo remote = new RemoteInfo();
+                                webHttpClientCom.getInstance(UserCenter.this).thread_DownAndSaveMys(remote,
+                                        "appRemote?select=id,xh,dev,downloads as ct,GoodCount as gt,BadCount as bt,'' as Au,isAc,1 as ty&where=id=" + aid);
+                            }
+                            if (isInterrupted()) break;
                         }
-                        if(!localhas){
-                            String param = "appRemote?select=id,xh,dev,downloads as ct,GoodCount as gt,BadCount as bt,'' as Au,isAc,1 as ty&where=id="+aid;
-                            webHttpClientCom.getInstance(UserCenter.this).ThreadHttpCall("appRemote/"+ aid,null,"DELETE",null);
-                        }
-                        if(isInterrupted())break;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }catch (JSONException e) {
-                    e.printStackTrace();
                 }
                 //--------------------------
                 long alen = abs(SystemClock.uptimeMillis()-txtime);
