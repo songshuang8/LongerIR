@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_color_theme_1"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height" />
+
+    <clurc.net.longerir.view.DoubleScrollViewLayout
+        android:id="@+id/doubleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/qmui_config_color_white"
+        android:orientation="vertical">
+
+        <clurc.net.longerir.view.TopBottomMonitorScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:orientation="vertical">
+
+                <com.zhouwei.mzbanner.MZBannerView
+                    android:id="@+id/banner"
+                    android:layout_width="match_parent"
+                    android:layout_height="348dp"
+                    app:canLoop="true"
+                    app:indicatorAlign="center"
+                    app:indicatorPaddingLeft="10dp"
+                    app:open_mz_mode="true"></com.zhouwei.mzbanner.MZBannerView>
+
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/cvp"
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"
+                    android:layout_marginLeft="60dp"
+                    android:layout_marginRight="60dp"
+                    android:clipChildren="false"
+                    android:visibility="gone"></androidx.viewpager.widget.ViewPager>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="15dp"
+                    android:text="CLR79835-E4 USB/IR Prog. Remote Control"
+                    android:textColor="#222"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tvInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/cvp"
+                    android:layout_marginLeft="15dp"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="20dp"
+                    android:text="color:black\n\n\n4 in 1 \n\n\nShift function\n\n\n43 x 2 buttons + 6 TV common buttons\n\n\nPC software download."
+                    android:textColor="#555"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="#ededed"
+                    android:gravity="center"
+                    android:text="↑↑↑More..." />
+            </LinearLayout>
+
+        </clurc.net.longerir.view.TopBottomMonitorScrollView>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <clurc.net.longerir.view.TopBottomMonitorScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <clurc.net.longerir.view.AllListView
+                    android:id="@+id/alv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></clurc.net.longerir.view.AllListView>
+
+            </clurc.net.longerir.view.TopBottomMonitorScrollView>
+        </RelativeLayout>
+    </clurc.net.longerir.view.DoubleScrollViewLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="45dp">
+
+        <TextView
+            android:id="@+id/tvWx"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/app_color_theme_3"
+            android:gravity="center"
+            android:text="Add to cart"
+            android:textSize="16dp" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,9 @@
+/build
+.externalNativeBuild
+.cxx
+src/androidTest
+src/test
+src/main/assets
+build
+libs
+sampledata

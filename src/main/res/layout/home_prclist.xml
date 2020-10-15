@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_color_theme_6"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/qmui_config_color_white"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/pnltitle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/qmui_list_item_height"
+            android:background="@color/app_color_blue_pressed"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/modename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp" />
+
+            <TextView
+                android:id="@+id/wizard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:text="@string/str_prcwizard"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/pge1"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:clickable="true"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/pagename1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="ddd"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4">
+
+                <TextView
+                    android:id="@+id/page1pp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:clickable="true"
+                    android:text="ss" />
+
+                <TextView
+                    android:id="@+id/page1xh"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/page1pp"
+                    android:layout_margin="2dp"
+                    android:clickable="true"
+                    android:text="aaa" />
+
+                <TextView
+                    android:id="@+id/page1edt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:clickable="true"
+                    android:text="@string/str_edit"
+                    android:textColor="@color/app_color_description" />
+
+                <TextView
+                    android:id="@+id/page1del"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_toLeftOf="@id/page1edt"
+                    android:clickable="true"
+                    android:text="@string/str_del"
+                    android:textColor="@color/app_color_description" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/sp1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/edtmodel"
+            android:layout_marginTop="4dp"
+            android:background="@color/bar_divider" />
+        <LinearLayout
+            android:id="@+id/pge2"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/pagename2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="ddd"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4">
+
+                <TextView
+                    android:id="@+id/page2pp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:clickable="true"
+                    android:text="ss" />
+
+                <TextView
+                    android:id="@+id/page2xh"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/page2pp"
+                    android:layout_margin="2dp"
+                    android:clickable="true"
+                    android:text="aaa" />
+
+                <TextView
+                    android:id="@+id/page2edt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:clickable="true"
+                    android:text="@string/str_edit"
+                    android:textColor="@color/app_color_description" />
+
+                <TextView
+                    android:id="@+id/page2del"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_toLeftOf="@id/page2edt"
+                    android:clickable="true"
+                    android:text="@string/str_del"
+                    android:textColor="@color/app_color_description" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/sp2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/edtmodel"
+            android:layout_marginTop="4dp"
+            android:background="@color/bar_divider" />
+        <LinearLayout
+            android:id="@+id/pge3"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/pagename3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="ddd"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4">
+
+                <TextView
+                    android:id="@+id/page3pp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:clickable="true"
+                    android:text="ss" />
+
+                <TextView
+                    android:id="@+id/page3xh"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/page3pp"
+                    android:layout_margin="2dp"
+                    android:clickable="true"
+                    android:text="aaa" />
+
+                <TextView
+                    android:id="@+id/page3edt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:clickable="true"
+                    android:text="@string/str_edit"
+                    android:textColor="@color/app_color_description" />
+
+                <TextView
+                    android:id="@+id/page3del"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_toLeftOf="@id/page3edt"
+                    android:clickable="true"
+                    android:text="@string/str_del"
+                    android:textColor="@color/app_color_description" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/sp3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/edtmodel"
+            android:layout_marginTop="4dp"
+            android:background="@color/bar_divider" />
+        <LinearLayout
+            android:id="@+id/pge4"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/pagename4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="ddd"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4">
+
+                <TextView
+                    android:id="@+id/page4pp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:clickable="true"
+                    android:text="ss" />
+
+                <TextView
+                    android:id="@+id/page4xh"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/page4pp"
+                    android:layout_margin="2dp"
+                    android:clickable="true"
+                    android:text="aaa" />
+
+                <TextView
+                    android:id="@+id/page4edt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:clickable="true"
+                    android:text="@string/str_edit"
+                    android:textColor="@color/app_color_description" />
+
+                <TextView
+                    android:id="@+id/page4del"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_toLeftOf="@id/page4edt"
+                    android:clickable="true"
+                    android:text="@string/str_del"
+                    android:textColor="@color/app_color_description" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/sp4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/edtmodel"
+            android:layout_marginTop="4dp"
+            android:background="@color/bar_divider" />
+        <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+            android:id="@+id/btnadd"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/home_tab_height"
+            android:layout_marginStart="22dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:padding="10dp"
+            android:text="@string/str_program"
+            android:textColor="@color/qmui_s_link_color"
+            android:visibility="visible" />
+    </LinearLayout>
+
+</LinearLayout>

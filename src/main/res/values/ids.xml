@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="qmuidemo" type="id"/>
+    <item name="main_container" type="id"/>
+    <item name="main_right_menu" type="id"/>
+    <item name="main_bar_seach" type="id"/>
+
+    <item name="empty_button" type="id"/>
+
+    <item name="topbar_left_users" type="id"/>
+
+    <item name="topbar_right_about_button" type="id"/>
+    <item name="topbar_right_change_button" type="id"/>
+    <item name="topbar_right_save_button" type="id"/>
+    <item name="topbar_right_test_button" type="id"/>
+
+    <item name="lanuse_set" type="id"/>
+
+    <item name="layout_for_test" type="id"/>
+    <item name="topbar_searchbtn" type="id"/>
+
+    <item name="banner_indicatorId" type="id" />
+
+</resources>

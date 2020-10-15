@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_color_theme_1"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/qmui_config_color_white"
+        android:clipChildren="false"
+        android:orientation="vertical">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:padding="4dp">
+
+                <TextView
+                    android:id="@+id/tx11"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="DoClick0"
+                    android:tag="TV"
+                    android:text="@string/str_usbtype"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/img12"
+                    style="@android:style/Widget.ImageButton"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@mipmap/bletranser"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:onClick="DoClick0" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:onClick="DoClick0"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tx13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="DoClick0"
+                        android:tag="SAT"
+                        app:textAllCaps="false" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgchk1"
+                    style="@android:style/Widget.ImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@mipmap/selected"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:onClick="DoClick0" />
+            </TableRow>
+
+            <View
+                android:id="@+id/sp1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="4dp"
+                android:background="@color/bar_divider" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:padding="4dp">
+
+                <TextView
+                    android:id="@+id/tx21"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="DoClick1"
+                    android:tag="TV"
+                    android:text="@string/str_blermt"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/img22"
+                    style="@android:style/Widget.ImageButton"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@mipmap/bleremote"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:onClick="DoClick1" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:onClick="DoClick1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tx23"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="DoClick1"
+                        android:tag="SAT" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgchk2"
+                    style="@android:style/Widget.ImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@mipmap/blank64"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:onClick="DoClick1" />
+            </TableRow>
+
+            <View
+                android:id="@+id/sp2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="4dp"
+                android:background="@color/bar_divider" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:padding="4dp">
+
+                <TextView
+                    android:id="@+id/tx31"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="DoClick2"
+                    android:tag="TV"
+                    android:text="@string/str_mobiletype"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/img32"
+                    style="@android:style/Widget.ImageButton"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@mipmap/mobileirport"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:onClick="DoClick2" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:onClick="DoClick2"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tx33"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="DoClick2"
+                        android:tag="SAT" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgchk3"
+                    style="@android:style/Widget.ImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/qmui_icon_checkmark"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:onClick="DoClick2" />
+            </TableRow>
+
+            <View
+                android:id="@+id/sp3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="4dp"
+                android:background="@color/bar_divider" />
+
+            <TableRow
+                android:id="@+id/rowaudio"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:padding="4dp">
+
+                <TextView
+                    android:id="@+id/tx41"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="DoClick3"
+                    android:tag="TV"
+                    android:text="@string/str_audiotype"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/img42"
+                    style="@android:style/Widget.ImageButton"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@mipmap/audio"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:onClick="DoClick3" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:onClick="DoClick3"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tx43"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:onClick="DoClick3"
+                        android:tag="SAT" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgchk4"
+                    style="@android:style/Widget.ImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/qmui_icon_checkmark"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:onClick="DoClick3" />
+            </TableRow>
+
+            <View
+                android:id="@+id/sp4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="4dp"
+                android:background="@color/bar_divider" />
+
+        </TableLayout>
+    </LinearLayout>
+
+</LinearLayout>

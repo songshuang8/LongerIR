@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_color_theme_1"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.qmuiteam.qmui.widget.QMUITopBar
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/qmui_topbar_height" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/qmui_config_color_white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                style="@style/Base.TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="false"
+                android:text="@string/str_search_his"
+                android:textAppearance="?android:attr/textAppearanceListItemSmall"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btn_his_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:focusableInTouchMode="false"
+                app:srcCompat="@android:drawable/ic_menu_delete" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recy_seachlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_his_delete"
+                android:background="@color/qmui_config_color_white" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="false"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/hotsou"
+                style="@style/Base.TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_hot_search"
+                android:textAppearance="?android:attr/textAppearanceListItemSmall"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical">
+
+                <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/list_ss_item_height"
+                    android:text="@string/str_brand"
+                    android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+
+                <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/list_ss_item_height"
+                    android:text="@string/str_model"
+                    android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+
+                <TextView
+                    style="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/list_ss_item_height"
+                    android:text="@string/str_dev"
+                    android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+
+                <ImageView
+                    style="@style/Base.TextAppearance.AppCompat.Body1"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginLeft="12dp"
+                    android:background="@mipmap/downloadcnt"
+                    android:gravity="center"
+                    android:minHeight="@dimen/list_ss_item_height"
+                    android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/listview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusableInTouchMode="true" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

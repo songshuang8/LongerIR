@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvbtn20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/app_color_theme_6"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/str_ac_20"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvbtn21"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/app_color_theme_6"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/str_ac_21" />
+
+        <TextView
+            android:id="@+id/tvbtn22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/app_color_theme_6"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/str_ac_22" />
+
+        <TextView
+            android:id="@+id/tvbtn23"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/app_color_theme_6"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/str_ac_23" />
+
+        <TextView
+            android:id="@+id/tvbtn24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/app_color_theme_6"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/str_ac_24" />
+
+        <TextView
+            android:id="@+id/tvbtn25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/app_color_theme_6"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/str_ac_25" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvbtn30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/colorHelper_square_from_ratio_background"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/str_ac_30"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvbtn31"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/colorHelper_square_from_ratio_background"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/str_ac_31" />
+
+        <TextView
+            android:id="@+id/tvbtn32"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/colorHelper_square_from_ratio_background"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/str_ac_32" />
+
+        <TextView
+            android:id="@+id/tvbtn33"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/colorHelper_square_from_ratio_background"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/str_ac_33" />
+
+        <TextView
+            android:id="@+id/tvbtn34"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@color/colorHelper_square_from_ratio_background"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/str_ac_34" />
+    </LinearLayout>
+
+</LinearLayout>
+

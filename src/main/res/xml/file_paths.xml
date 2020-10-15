@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <cache-path path="Android/data/clurc.net.longerir/" name="files_root" />
+    <cache-path path="." name="external_storage_root" />
+    <!--  files-path，cache-path，external-path，external-files-path，external-cache-path，
+    分别对应Context.getFilesDir()，Context.getCacheDir()，Environment.getExternalStorageDirectory()，
+    Context.getExternalFilesDir()，Context.getExternalCacheDir()
+        -->
+</paths>
