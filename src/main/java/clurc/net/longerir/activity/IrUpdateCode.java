@@ -15,6 +15,7 @@ import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import clurc.net.longerir.R;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
+import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.uicomm.SsSerivce;
 import pl.droidsonroids.gif.GifImageView;
 
@@ -183,7 +184,7 @@ public class IrUpdateCode extends BaseActivity {
         ///开始调用主转换函数
         Log.w(TAG_SS, "开锁键："+Integer.toHexString(remotekey));
         byte[] src = getPureData();
-        getAudioWData(src,0x40,remotekey, new OnDataEventer() {
+        getAudioWData(src,0x40,remotekey, new webHttpClientCom.WevEvent_SucData() {
             @Override
             public void onSuc(byte[] data) {
                 mCircleProgressBar.setProgress(0,false);

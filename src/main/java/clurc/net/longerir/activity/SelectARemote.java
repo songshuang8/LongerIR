@@ -179,7 +179,7 @@ public class SelectARemote extends BaseActivity{
         }catch (UnsupportedEncodingException e){
             param += seldev;
         }
-        BackgroundRest(param,null,"GET", new OnActivityEventer() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall(param,null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
             @Override
             public void onSuc() {
                 if(pplist==null)return;
@@ -191,7 +191,6 @@ public class SelectARemote extends BaseActivity{
                 if(ParseSysBrand(res))
                     return true;
                 else{
-                    errstr = getString(R.string.str_try);
                     return false;
                 }
             }
@@ -219,7 +218,7 @@ public class SelectARemote extends BaseActivity{
                 param += str_searchpp;
             }
         }
-        BackgroundRest(param,null,"GET", new OnActivityEventer() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall(param,null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
             @Override
             public void onSuc() {
                 if(idlist==null)return;
@@ -231,7 +230,6 @@ public class SelectARemote extends BaseActivity{
                 if(ParseSysModel(res))
                     return true;
                 else{
-                    errstr = getString(R.string.str_try);
                     return false;
                 }
             }
@@ -294,7 +292,6 @@ public class SelectARemote extends BaseActivity{
             return true;
         }catch (JSONException e) {
             e.printStackTrace();
-            errstr = e.getMessage();
         }
         return false;
     }

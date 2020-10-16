@@ -41,6 +41,7 @@ import clurc.net.longerir.activity.UserLogin;
 import clurc.net.longerir.data.BtnInfo;
 import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.RemoteInfo;
+import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.ircommu.DesRemote;
 import clurc.net.longerir.ircommu.PrcFunction;
 
@@ -205,7 +206,7 @@ public class PrcFragment extends BaseFragment {
                     intent.putExtra("prcdata",CfgData.ByteArrToString(prcdata));
                     ((Activity)context).startActivity(intent);
                 }else if(armt.isAc==CfgData.AcLear){
-                    HttpRest("getTransEepAc", CfgData.getRemoteTxtFile(armt,armt.btns), "POST", new OnActivityEventer() {
+                    webHttpClientCom.getInstance((Activity)context).RestkHttpCall("getTransEepAc", CfgData.getRemoteTxtFile(armt,armt.btns), "POST", new webHttpClientCom.WevEvent_SucData() {
                         @Override
                         public void onSuc(byte[] out) {
                             intent.setClass(context, PrcAcCommu.class);

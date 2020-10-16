@@ -282,7 +282,7 @@ public class PrcComuni extends BaseActivity {
         donghua.setVisibility(View.GONE);
         ///开始调用主转换函数
         Log.w(TAG_SS, "芯片类型："+chipkind+","+Integer.toHexString(remotekey));
-        getAudioData(CfgData.desbuttons, chipkind, remotekey, new OnDataEventer() {
+        getAudioData(CfgData.desbuttons, chipkind, remotekey, new webHttpClientCom.WevEvent_SucData() {
             @Override
             public void onSuc(byte[] data) {
                 mCircleProgressBar.setProgress(0,false);

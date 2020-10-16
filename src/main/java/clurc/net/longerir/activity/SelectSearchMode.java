@@ -77,7 +77,7 @@ public class SelectSearchMode extends BaseActivity {
                     // push
                     for (int i = 0; i < CfgData.myremotelist.size(); i++) {
                         if(CfgData.myremotelist.get(i).rid<1)
-                            webHttpClientCom.getInstance(null).Slient_UploadRemote(CfgData.myremotelist.get(i));
+                            webHttpClientCom.getInstance(null).thread_UploadRemote(CfgData.myremotelist.get(i),false);
                     }
                 }
             }).start();

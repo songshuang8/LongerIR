@@ -129,10 +129,9 @@ public class BleThread extends Thread{
                     final int freq = ld.getFreq();
                     Log.w(TAG_SS,"===>lear:"+freq+","+wavestr);
                     if(candecode) {
-                        byte[] data = null;
-                        String err = null;
-                        if(webHttpClientCom.getInstance(null).ThreadHttpCall("DoLearPro2?freq=" + freq, wavestr, "POST", data,err)) {
-                            ItrUiThread.toBroadcastLearInfo(ctx, wavestr, new String(data), freq);
+                        webHttpClientCom.HttpRet ret = webHttpClientCom.getInstance(null).ThreadHttpCall("DoLearPro2?freq=" + freq, wavestr, "POST");
+                        if(ret.result) {
+                            ItrUiThread.toBroadcastLearInfo(ctx, wavestr, new String(ret.data), freq);
                         };
                     }else{
                         ItrUiThread.toBroadcastLearInfo(ctx, wavestr,null, freq);

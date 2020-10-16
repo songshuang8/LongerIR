@@ -102,31 +102,4 @@ public class BaseFragment{
     public interface OnActivityEventer {
         void onSuc(byte[] out);
     }
-    public void HttpRest(String urlparam, String body, String method, final OnActivityEventer aev) {
-        showwait();
-        webHttpClientCom.getInstance((Activity) context).RestkHttpCall(urlparam, body, method, new webHttpClientCom.RestOnWebPutEvent() {
-            @Override
-            public void onSuc(final byte[] out) {
-                ((Activity) context).runOnUiThread(new Runnable() {
-                    public void run() {
-                        tipDialog.dismiss();
-                        aev.onSuc(out);
-                    }
-                });
-            }
-
-            @Override
-            public void onFail(final boolean netfaulre, final String res) {
-                ((Activity) context).runOnUiThread(new Runnable() {
-                    public void run() {
-                        tipDialog.dismiss();
-                        if (netfaulre)
-                            showMessage(context.getString(R.string.str_err), context.getString(R.string.str_err_net));
-                        if (res != null && res.length() > 0)
-                            showMessage(context.getString(R.string.str_err), res);
-                    }
-                });
-            }
-        });
-    }
 }

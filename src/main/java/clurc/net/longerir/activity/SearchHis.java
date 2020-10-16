@@ -139,17 +139,17 @@ public class SearchHis  extends BaseActivity {
 
     private void getSvrTopData(){
         String param = "topremote?top=30";
-        BackgroundRest(param,null,"GET", new OnActivityEventer() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall(param,null,"GET", new webHttpClientCom.WevEvent_NoErr() {
             @Override
-            public void onSuc() {
+            public void onSuc(byte[] data) {
                 adapter.notifyDataSetChanged();
 
             }
             @Override
-            public boolean onDodata(String res) {
+            public boolean onDoData(byte[] res) {
                 topdata.clear();
                 try {
-                    Object json = new JSONTokener(res).nextValue();
+                    Object json = new JSONTokener(new String(res)).nextValue();
                     if(json instanceof JSONArray) {
                         JSONArray jsonAll = (JSONArray) json;
                         for (int i = 0; i < jsonAll.length(); i++) {
@@ -171,7 +171,6 @@ public class SearchHis  extends BaseActivity {
                     return true;
                 }catch (JSONException e) {
                     e.printStackTrace();
-                    errstr = e.getMessage();
                 }
                 return false;
             }

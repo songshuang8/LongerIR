@@ -71,25 +71,10 @@ public class DialogRemoteInfo extends QMUIDialogBuilder {
 
     private void DoDownDevList(){
         if(CfgData.devitems.size()>0)return;
-        webHttpClientCom.getInstance(context).RestkHttpCall("search_devs?data=" + CfgData.dataidx, null, "GET", new webHttpClientCom.RestOnWebPutEvent() {
+        webHttpClientCom.getInstance(context).RestkHttpCall("search_devs?data=" + CfgData.dataidx, null, "GET", new webHttpClientCom.WevEvent_SucString() {
             @Override
-            public void onSuc(final byte[] out) {
-                context.runOnUiThread(new Runnable() {
-                    public void run() {
-                        if (CfgData.DoChkdevs(new String(out))) {
-
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onFail(final boolean netfaulre, final String res) {
-                context.runOnUiThread(new Runnable() {
-                    public void run() {
-
-                    }
-                });
+            public void onSuc(String res) {
+                CfgData.DoChkdevs(res);
             }
         });
     }

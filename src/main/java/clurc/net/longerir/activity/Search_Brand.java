@@ -29,6 +29,7 @@ import clurc.net.longerir.BaseApplication;
 import clurc.net.longerir.R;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
+import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.manager.CharacterParser;
 import clurc.net.longerir.view.SegmentedRadioGroup;
 import clurc.net.longerir.view.SideBar;
@@ -172,7 +173,7 @@ public class Search_Brand extends BaseActivity {
     }
 
     private void getSysBrandData(){
-        BackgroundRest("search_brands?data="+CfgData.dataidx+"&GUESTID=0",null,"GET", new OnActivityEventer() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall("search_brands?data="+CfgData.dataidx+"&GUESTID=0",null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
             @Override
             public void onSuc() {
                 showListView(sysremote_brands);
@@ -182,7 +183,6 @@ public class Search_Brand extends BaseActivity {
                 if(CfgData.ParseBrandArr(sysremote_brands,res))
                     return true;
                 else{
-                    errstr = getString(R.string.str_try);
                     return false;
                 }
             }
@@ -190,7 +190,7 @@ public class Search_Brand extends BaseActivity {
     }
 
     private void getShrBrandData(){
-        BackgroundRest("search_brands?data=2&GUESTID=0",null,"GET", new OnActivityEventer() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall("search_brands?data=2&GUESTID=0",null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
             @Override
             public void onSuc() {
                 showListView(shrremote_brands);
@@ -200,7 +200,6 @@ public class Search_Brand extends BaseActivity {
                 if(CfgData.ParseBrandArr(shrremote_brands,res))
                     return true;
                 else{
-                    errstr = getString(R.string.str_try);
                     return false;
                 }
             }
@@ -222,11 +221,12 @@ public class Search_Brand extends BaseActivity {
     }
 
     private void getOwnerInfo(){
-        BackgroundRest("vipGuestInfo",null,"GET", new OnActivityEventer() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall("vipGuestInfo",null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
             @Override
             public void onSuc() {
                 showSelectGuest();
             }
+
             @Override
             public boolean onDodata(String res) {
                 try {
@@ -241,7 +241,6 @@ public class Search_Brand extends BaseActivity {
                     return true;
                 }catch (JSONException e) {
                     e.printStackTrace();
-                    errstr = getString(R.string.str_try);
                     return false;
                 }
             }
@@ -276,7 +275,7 @@ public class Search_Brand extends BaseActivity {
             url = "upinfo?select=pp&where=author="+authorid+" group by pp";
         else
             url = "upinfo?select=pp&where=group by pp";
-        BackgroundRest(url,null,"GET", new OnActivityEventer() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall(url,null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
             @Override
             public void onSuc() {
                 showListView(ownerremote_brands);
@@ -286,7 +285,6 @@ public class Search_Brand extends BaseActivity {
                 if(CfgData.ParseBrandArr(ownerremote_brands,res))
                     return true;
                 else{
-                    errstr = getString(R.string.str_try);
                     return false;
                 }
             }

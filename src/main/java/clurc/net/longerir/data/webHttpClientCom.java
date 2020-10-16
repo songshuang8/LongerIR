@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.HttpRetryException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -58,11 +59,6 @@ public class webHttpClientCom {
         }else if(context!=null)
             webinstace.context = context;
         return webinstace;
-    }
-
-    public interface RestOnWebPutEvent {
-        void onSuc(byte[] out);
-        void onFail(String res);
     }
 
     public interface OnDownEventer {
@@ -150,8 +146,8 @@ public class webHttpClientCom {
         }).start();
     }
 
-    public boolean ThreadHttpCall(String urlparam, String body,String method,byte[] result,String err) {
-        boolean ret = false;
+    public HttpRet ThreadHttpCall(String urlparam, String body,String method) {
+        HttpRet ret = new HttpRet();
         try {
             URL url = new URL(baseurl + urlparam);
             // 打开一个HttpURLConnection连接
@@ -190,10 +186,10 @@ public class webHttpClientCom {
                 }
                 Log.w(TAG_SS,"recv len = "+ bdata.length);
                 Log.w(TAG_SS,urlparam+"===>http code="+rescode+" body="+new String(bdata));
-                result = bdata;
-                ret = true;
+                ret.data = bdata;
+                ret.result = true;
             } else {
-                err ="Error Code = " + rescode;
+                ret.err ="Error Code = " + rescode;
                 Log.w(TAG_SS,urlparam+"===>http code="+rescode);
             }
             urlConn.disconnect();
@@ -204,21 +200,157 @@ public class webHttpClientCom {
         return ret;
     }
 
-    public void RestkHttpCall(final String urlparam, final String body,final String method, final RestOnWebPutEvent aev) {
+    public interface WevEvent {
+        void onSuc(byte[] out); //ui
+        void onFail(String res); //ui
+        boolean onDoData(byte[] out); //线程内处理
+    }
+    public void RestkHttpCallBase(final String urlparam, final String body, final String method, final WevEvent aev) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String err = null;
-                byte[] data = null;
-                if(ThreadHttpCall(urlparam, body,method,data,err)){
-                    aev.onSuc(data);
+                final HttpRet ret = ThreadHttpCall(urlparam, body,method);
+                if(ret.result){
+                    if(aev!=null) {
+                        if(aev.onDoData(ret.data)) {
+                            context.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    aev.onSuc(ret.data);
+                                }
+                            });
+                        }else
+                            aev.onFail("Unknown err founded!");
+                    }
                 }else{
-                    aev.onFail(err);
+                    if(aev!=null) {
+                        context.runOnUiThread(new Runnable() {
+                            public void run() {
+                                aev.onFail(ret.err);
+                            }
+                        });
+                    }
                 }
             }
         }).start();
     }
+    private void RestkHttpCallBaseUI(final String urlparam, final String body, final String method, final WevEvent aev) {
+        final QMUITipDialog tipDialog = new QMUITipDialog.Builder(context)
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                .setTipWord(context.getString(R.string.str_wait))
+                .create();
+        if(aev!=null)
+            tipDialog.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final HttpRet ret = ThreadHttpCall(urlparam, body,method);
+                if(ret.result){
+                    if(aev!=null) {
+                        if(aev.onDoData(ret.data)) {
+                            context.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    tipDialog.dismiss();
+                                    aev.onSuc(ret.data);
+                                }
+                            });
+                        }else {
+                            context.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    tipDialog.dismiss();
+                                    aev.onFail("Unknown err founded!");
+                                }
+                            });
+                        }
+                    }
+                }else{
+                    if(aev!=null) {
+                        context.runOnUiThread(new Runnable() {
+                            public void run() {
+                                tipDialog.dismiss();
+                                aev.onFail(ret.err);
+                            }
+                        });
+                    }
+                }
+            }
+        }).start();
+    }
+    public interface WevEvent_NoErr{
+        void onSuc(byte[] out); //ui
+        boolean onDoData(byte[] out); //线程内处理
+    }
+    public void RestkHttpCall(String urlparam, String body, String method, final WevEvent_NoErr aev) {
+        RestkHttpCallBaseUI(urlparam, body, method, new WevEvent() {
+            @Override
+            public void onSuc(byte[] out) {
+                aev.onSuc(out);
+            }
 
+            @Override
+            public void onFail(String res) {
+//                if (res==null)
+                    Toast.makeText(context,  getString(R.string.str_err_net), Toast.LENGTH_SHORT).show();
+//                if (res.length() > 0)
+//                    Toast.makeText(context,  getString(R.string.str_err), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public boolean onDoData(byte[] out) {
+                return aev.onDoData(out);
+            }
+        });
+    }
+
+    public interface WevEvent_NoErrString{
+        void onSuc(); //ui
+        boolean onDodata(String res); //线程内处理
+    }
+    public void RestkHttpCall(String urlparam, String body, String method, final WevEvent_NoErrString aev) {
+        RestkHttpCall(urlparam, body, method, new WevEvent_NoErr() {
+            @Override
+            public void onSuc(byte[] out) {
+                aev.onSuc();
+            }
+
+            @Override
+            public boolean onDoData(byte[] out) {
+                return aev.onDodata(new String(out));
+            }
+        });
+    }
+
+    public interface WevEvent_SucData{
+        void onSuc(byte[] data); //ui
+    }
+    public void RestkHttpCall(final String urlparam, final String body, final String method, final WevEvent_SucData aev) {
+        RestkHttpCall(urlparam, body, method, new WevEvent_NoErr() {
+            @Override
+            public void onSuc(byte[] out) {
+                aev.onSuc(out);
+            }
+
+            @Override
+            public boolean onDoData(byte[] out) {
+                return true;
+            }
+        });
+    }
+    public interface WevEvent_SucString {
+        void onSuc(String res); //ui
+    }
+    public void RestkHttpCall(final String urlparam, final String body, final String method, final WevEvent_SucString aev) {
+        RestkHttpCall(urlparam, body, method, new WevEvent_NoErr() {
+            @Override
+            public void onSuc(byte[] out) {
+                aev.onSuc(new String(out));
+            }
+
+            @Override
+            public boolean onDoData(byte[] out) {
+                return true;
+            }
+        });
+    }
     //-------------------upload remote
     public void static_showMessage(String title,String contxt){
         new QMUIDialog.MessageDialogBuilder(context)
@@ -233,70 +365,8 @@ public class webHttpClientCom {
                 })
                 .show();
     }
-    public interface RestOnAppEvent {
-        void onSuc();
-    }
-    //上传遥控器
-    public void Rest_UploadRemote(final RemoteInfo remote,String params, final  RestOnAppEvent aev){
-        if(CfgData.userid<0){
-            static_showMessage(getString(R.string.str_info),getString(R.string.str_pls_login));
-            return;
-        }
-        List<BtnInfo> btnlist = CfgData.getBtnInfo(context,remote.id);
-        if(remote.isAc!=CfgData.AcPro) {
-            int validcount = 0;
-            for (int i = 0; i < btnlist.size(); i++) {
-                if (btnlist.get(i).gsno >= 0) validcount++;
-            }
-            if (validcount < 2) {
-                static_showMessage(getString(R.string.str_info), getString(R.string.str_tips_btnlititle));
-                return;
-            }
-        }
-        final QMUITipDialog tipDialog = new QMUITipDialog.Builder(context)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord(context.getString(R.string.str_wait))
-                .create();
-        tipDialog.show();
-        String txtstr = CfgData.getRemoteTxtFile(remote,btnlist);
-        RestkHttpCall(params+ CfgData.userid,txtstr,"POST", new webHttpClientCom.RestOnWebPutEvent() {
-            @Override
-            public void onSuc(final byte[] out) {
-                context.runOnUiThread(new Runnable() {
-                    public void run() {
-                        tipDialog.dismiss();
-                        try {
-                            JSONObject jsonObj = new JSONObject(new String(out));
-                            remote.rid = jsonObj.getInt("id");
-                            CfgData.AppendoOrEditMyFile(context,remote,null);
-                            aev.onSuc();
-                        }catch (JSONException e) {
-                            static_showMessage(getString(R.string.str_err),getString(R.string.str_share_err));
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onFail(final String res) {
-                ((Activity)(context)).runOnUiThread(new Runnable() {
-                    public void run() {
-                        tipDialog.dismiss();
-                        if (res==null)
-                            static_showMessage(getString(R.string.str_err), getString(R.string.str_err_net));
-                        else
-                        if (res != null && res.length() > 0)
-                            static_showMessage(getString(R.string.str_err), res);
-                    }
-                });
-            }
-        });
-    }
-
     //静默上传或覆盖我的遥控器
-    public boolean thread_UploadRemote(RemoteInfo remote){
-        if(CfgData.userid<0)return true;
+    public int thread_UploadRemote(RemoteInfo remote,boolean ispub){
         List<BtnInfo> btnlist = CfgData.getBtnInfo(context,remote.id);
         if(remote.isAc!=CfgData.AcPro){
             int validcount = 0;
@@ -304,31 +374,78 @@ public class webHttpClientCom {
                 if (btnlist.get(i).gsno >= 0) validcount++;
             }
             if (validcount < 2) {
-                return true;
+                return -1;
             }
         }
         String txtstr = CfgData.getRemoteTxtFile(remote,btnlist);
         String p;
+        if(ispub){
+            p = "ClientUpload?USERID=" + CfgData.userid;
+        }else
         if(remote.rid>0){
             p = "appEditUpload?id=="+remote.rid;
         }else{
+            if(CfgData.userid<0)return -2;
             p = "appUpload?userid="+CfgData.userid;
         }
-        byte[] data = null;
-        String err = null;
-        if(ThreadHttpCall(p,txtstr,"POST",data,err)==false)return false;
+        HttpRet ret = ThreadHttpCall(p,txtstr,"POST");
+        if(ret.result==false)return -3;
+        if(ispub){
+            String res = new String(ret.data);
+            if(res.contains("ok"))
+                return 0;
+            else {
+                static_showMessage(getString(R.string.str_err),getString(R.string.str_share_err));
+            }
+        }
         if(remote.rid<1) {
             try {
-                JSONObject jsonObj = new JSONObject(new String(data));
+                JSONObject jsonObj = new JSONObject(new String(ret.data));
                 remote.rid = jsonObj.getInt("id");
                 CfgData.AppendoOrEditMyFile(context, remote, null);
-                return true;
+                return 0;
             } catch (JSONException e) {
-                static_showMessage(getString(R.string.str_err), getString(R.string.str_share_err));
                 e.printStackTrace();
             }
         }
-        return false;
+        return -4;
+    }
+    //上传遥控器
+    public interface RestOnAppEvent {
+        void onSuc();
+    }
+    public void Rest_UploadRemote(final RemoteInfo remote, final boolean ismy, final  RestOnAppEvent aev){
+        if(CfgData.userid<0){
+            static_showMessage(getString(R.string.str_info),getString(R.string.str_pls_login));
+            return;
+        }
+        final QMUITipDialog tipDialog = new QMUITipDialog.Builder(context)
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                .setTipWord(context.getString(R.string.str_wait))
+                .create();
+        tipDialog.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final int ret = thread_UploadRemote(remote,ismy);
+                context.runOnUiThread(new Runnable() {
+                    public void run() {
+                        tipDialog.dismiss();
+                        switch (ret){
+                            case -1:
+                                static_showMessage(getString(R.string.str_info), getString(R.string.str_tips_btnlititle));
+                                break;
+                            case 0:
+                                aev.onSuc();
+                                break;
+                            default:
+                                static_showMessage(getString(R.string.str_err), getString(R.string.str_err_net));
+                                break;
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     //下载遥控器数据
@@ -338,9 +455,19 @@ public class webHttpClientCom {
                 .setTipWord(context.getString(R.string.str_wait))
                 .create();
         tipDialog.show();
-        RestkHttpCall(params, null, "GET", new webHttpClientCom.RestOnWebPutEvent() {
+        RestkHttpCall(params, null, "GET", new webHttpClientCom.WevEvent_NoErr() {
             @Override
             public void onSuc(byte[] out) {
+                context.runOnUiThread(new Runnable() {
+                    public void run() {
+                        tipDialog.dismiss();
+                        aev.onSuc();
+                    }
+                });
+            }
+
+            @Override
+            public boolean onDoData(byte[] out) {
                 String errstr = "Unknown err";
                 boolean suc = false;
                 String res = new String(out);
@@ -357,31 +484,7 @@ public class webHttpClientCom {
                     }
                     suc = true;
                 }
-                final boolean fsuc = suc;
-                final String ferr = errstr;
-                context.runOnUiThread(new Runnable() {
-                    public void run() {
-                        tipDialog.dismiss();
-                        if (fsuc) {
-                            aev.onSuc();
-                        } else {
-                            Toast.makeText(context, ferr, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onFail(final String res) {
-                context.runOnUiThread(new Runnable() {
-                    public void run() {
-                        tipDialog.dismiss();
-                        if (res==null)
-                            static_showMessage( getString(R.string.str_err), getString(R.string.str_err_net));
-                        else if (res != null && res.length() > 0)
-                            static_showMessage( getString(R.string.str_err), res);
-                    }
-                });
+                return suc;
             }
         });
     }
@@ -405,12 +508,11 @@ public class webHttpClientCom {
 
     public boolean thread_DownAndSaveMys(RemoteInfo remote,String params){
         final List<TxtBtnInfo> txtbtns = new ArrayList<TxtBtnInfo>();
-        String err = null;
-        byte[] data = null;
-        if(!ThreadHttpCall(params, null,"GET",data,err))return false;
+        HttpRet ret = ThreadHttpCall(params, null,"GET");
+        if(!ret.result)return false;
         String errstr = "Unknown err";
         boolean suc = false;
-        String res = new String(data);
+        String res = new String(ret.data);
         if (QMUILangHelper.isNullOrEmpty(res)) return false;
         if (remote.pp == null)
             CfgData.GetRemoteFromText(remote, res);
@@ -437,7 +539,7 @@ public class webHttpClientCom {
                 .create();
         tipDialog.show();
         final boolean iscodecant = itm[0].equals("upinfo");
-        RestkHttpCall(itm[0]+"?select=data,pp,xh,dev,isAc&where=id in "+itm[1], null, "GET", new webHttpClientCom.RestOnWebPutEvent() {
+        RestkHttpCallBase(itm[0]+"?select=data,pp,xh,dev,isAc&where=id in "+itm[1], null, "GET", new webHttpClientCom.WevEvent() {
             @Override
             public void onSuc(byte[] out) {
                 String errstr = "Unknown err";
@@ -483,31 +585,26 @@ public class webHttpClientCom {
                         errstr = e.getMessage();
                     }
                 }
-                final boolean fsuc = suc;
-                final String ferr = errstr;
-                context.runOnUiThread(new Runnable() {
-                    public void run() {
-                        tipDialog.dismiss();
-                        if (fsuc) {
-                            aev.onSuc();
-                        } else {
-                            Toast.makeText(context, ferr, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                tipDialog.dismiss();
+                if (suc) {
+                    aev.onSuc();
+                } else {
+                    Toast.makeText(context, errstr, Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFail(final String res) {
-                context.runOnUiThread(new Runnable() {
-                    public void run() {
                         tipDialog.dismiss();
                         if (res==null)
                             static_showMessage( getString(R.string.str_err), getString(R.string.str_err_net));
                         else if (res != null && res.length() > 0)
                             static_showMessage( getString(R.string.str_err), res);
-                    }
-                });
+            }
+
+            @Override
+            public boolean onDoData(byte[] out) {
+                return true;
             }
         });
     }
@@ -530,27 +627,37 @@ public class webHttpClientCom {
                 //
                 String s = CfgData.getButtonsString(buttons);
                 Log.w(TAG_SS,"===>eep sorce:"+s+";"+chip+","+0);
-                final String err = null;
-                final byte[] data = null;
-                if(ThreadHttpCall("getTransEep?chip=" + chip + "&force=0", s, "POST", data,err)==false) {
+                final HttpRet ret = ThreadHttpCall("getTransEep?chip=" + chip + "&force=0", s, "POST");
+                if(ret.result==false) {
                     context.runOnUiThread(new Runnable() {
                         public void run() {
                             tipDialog.dismiss();
-                            aev.onSuc(data);
+                            aev.onSuc(ret.data);
                         }
                     });
                 }else{
                     context.runOnUiThread(new Runnable() {
                         public void run() {
                             tipDialog.dismiss();
-                            if (err==null)
+                            if (ret.err==null)
                                 static_showMessage( getString(R.string.str_err), getString(R.string.str_err_net));
-                            else if (err.length() > 0)
-                                static_showMessage( getString(R.string.str_err), err);
+                            else if (ret.err.length() > 0)
+                                static_showMessage( getString(R.string.str_err), ret.err);
                         }
                     });
                 }
             }
         }).start();
+    }
+
+    public class HttpRet{
+        public boolean result;
+        public byte[] data;
+        public String err;
+
+        public HttpRet(){
+            result = false;
+            err = null;
+        }
     }
 }

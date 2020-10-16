@@ -56,7 +56,6 @@ public class BaseActivity  extends AppCompatActivity {
 
     public int layid;
     public String title;
-    public String errstr;
     public boolean showback = true;
     public boolean backresultok = false;
 
@@ -160,45 +159,7 @@ public class BaseActivity  extends AppCompatActivity {
         }, 1500);
     }
 
-    public interface OnActivityEventer {
-        void onSuc();
-        boolean onDodata(String res);
-    }
-
-    public void BackgroundRest(String urlparam, String body, String method, final OnActivityEventer aev) {
-        showwait();
-        webHttpClientCom.getInstance(instance).RestkHttpCall(urlparam, body, method, new webHttpClientCom.RestOnWebPutEvent() {
-            @Override
-            public void onSuc(byte[] out) {
-                final boolean b = aev.onDodata(new String(out));
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        hidedialog();
-                        if (b) {
-                            aev.onSuc();
-                        } else {
-                            ShowDialog(errstr);
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onFail(final boolean netfaulre, final String res) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        hidedialog();
-                        if (netfaulre)
-                            showMessage(getString(R.string.str_err), getString(R.string.str_err_net));
-                        if (res != null && res.length() > 0)
-                            showMessage(getString(R.string.str_err), res);
-                    }
-                });
-            }
-        });
-    }
-
-//    public void BackgroundRest(String urlparam, String body, String method, final OnActivityEventer aev) {
+//    public void webHttpClientCom.getInstance(instance).RestkHttpCall(String urlparam, String body, String method, final OnActivityEventer aev) {
 //        showwait();
 //        String[] pam = new String[3];
 //        pam[0]=urlparam;pam[1]=body;pam[2] = method;
@@ -427,37 +388,7 @@ public class BaseActivity  extends AppCompatActivity {
         }
     }
 
-    public interface OnDataEventer{
-        void onSuc(byte[] data);
-    }
-    private void BackgroundPut(String urlparam,String body,final OnDataEventer aev){
-        showwait();
-        webHttpClientCom.getInstance(instance).RestkHttpCall(urlparam,body,"POST", new webHttpClientCom.RestOnWebPutEvent() {
-            @Override
-            public void onSuc(final byte[] out) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        hidedialog();
-                        aev.onSuc(out);
-                    }
-                });
-            }
-            @Override
-            public void onFail(final boolean isnet, final String res) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        hidedialog();
-                        if(isnet){
-                            ShowDialog(getString(R.string.str_err_net));
-                        }else
-                            ShowDialog(res);
-                    }
-                });
-            }
-        });
-    }
-
-    public void getAudioData(List<IrButton> buttons,int remoteType,int remoteid,OnDataEventer aev){
+    public void getAudioData(List<IrButton> buttons,int remoteType,int remoteid,webHttpClientCom.WevEvent_SucData aev){
         if(buttons.size()==0){
             Toast.makeText(instance, "Err founded.Can not made PRC's data!", Toast.LENGTH_SHORT).show();
             return;
@@ -468,10 +399,10 @@ public class BaseActivity  extends AppCompatActivity {
             return;
         }
         Log.w(TAG_SS,"===>eep sorce:"+s+";"+remoteType+",remoteid="+remoteid);
-        BackgroundPut("getAudioData?chip="+remoteType+"&force=0"+"&rmtid="+remoteid,s,aev);
+        webHttpClientCom.getInstance(instance).RestkHttpCall("getAudioData?chip="+remoteType+"&force=0"+"&rmtid="+remoteid,s,"GET",aev);
     }
 
-    public void getAudioWData(byte[] data,int addr,int remoteid,OnDataEventer aev){
+    public void getAudioWData(byte[] data,int addr,int remoteid,webHttpClientCom.WevEvent_SucData aev){
         byte[] ret=null;
         if(data.length==0){
             Toast.makeText(instance, "Err founded.Can not made PRC's data!", Toast.LENGTH_SHORT).show();
@@ -485,6 +416,6 @@ public class BaseActivity  extends AppCompatActivity {
             s+= sub;
         }
         Log.w(TAG_SS,"===>get audio write:"+s);
-        BackgroundPut("getAudioWData?addr="+addr+"&rmtid="+remoteid,s,aev);
+        webHttpClientCom.getInstance(instance).RestkHttpCall("getAudioWData?addr="+addr+"&rmtid="+remoteid,s,"GET",aev);
     }
 }

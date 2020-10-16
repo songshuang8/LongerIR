@@ -26,6 +26,7 @@ import java.util.List;
 import clurc.net.longerir.R;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
+import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.manager.CharacterParser;
 import clurc.net.longerir.view.SideBar;
 
@@ -130,7 +131,7 @@ public class Search_Brand2 extends BaseActivity {
         }catch (UnsupportedEncodingException e){
             param += selectdev;
         }
-        BackgroundRest(param,null,"GET", new OnActivityEventer() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall(param,null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
             @Override
             public void onSuc() {
                 showSysListView();
@@ -140,7 +141,6 @@ public class Search_Brand2 extends BaseActivity {
                 if(ParseSysBrand(res))
                     return true;
                 else{
-                    errstr = getString(R.string.str_try);
                     return false;
                 }
             }

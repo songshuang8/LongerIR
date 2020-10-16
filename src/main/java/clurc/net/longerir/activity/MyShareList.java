@@ -136,15 +136,11 @@ public class MyShareList extends BaseActivity {
                                                     url = "rawinfo/";
                                                 else
                                                     url = "upinfo/";
-                                                BackgroundRest(url+mysharelist.get(currindex).getId(),null,"DELETE", new OnActivityEventer() {
+                                                webHttpClientCom.getInstance(instance).RestkHttpCall(url+mysharelist.get(currindex).getId(),null,"DELETE", new webHttpClientCom.WevEvent_SucString() {
                                                     @Override
-                                                    public void onSuc() {
+                                                    public void onSuc(String res) {
                                                         mysharelist.remove(currindex);
                                                         deviceAdapter.notifyDataSetChanged();
-                                                    }
-                                                    @Override
-                                                    public boolean onDodata(String res) {
-                                                        return true;
                                                     }
                                                 });
                                             }
@@ -165,18 +161,14 @@ public class MyShareList extends BaseActivity {
                                         String vip = "0";
                                         if(CfgData.usertype!=2)vip="1";
                                         String body = CfgData.getRemoteTxtFile(aremote,null);
-                                        BackgroundRest("ClientEditUpload?RMTID="+mysharelist.get(currindex).getId()+"&vip="+vip,body,"POST", new OnActivityEventer() {
+                                        webHttpClientCom.getInstance(instance).RestkHttpCall("ClientEditUpload?RMTID="+mysharelist.get(currindex).getId()+"&vip="+vip,body,"POST", new webHttpClientCom.WevEvent_SucData() {
                                             @Override
-                                            public void onSuc() {
+                                            public void onSuc(byte[] dta) {
                                                 mysharelist.get(currindex).setPp(aremote.pp);
                                                 mysharelist.get(currindex).setXh(aremote.xh);
                                                 mysharelist.get(currindex).setDev(aremote.dev);
                                                 deviceAdapter.notifyDataSetChanged();
                                                 Toast.makeText(instance,"Save ok", Toast.LENGTH_SHORT).show();
-                                            }
-                                            @Override
-                                            public boolean onDodata(String res) {
-                                                return true;
                                             }
                                         });
                                     }
@@ -218,9 +210,9 @@ public class MyShareList extends BaseActivity {
                     url = "rawinfo/data/"+ rid;
                 else
                     url = "upinfo/data/"+ rid;
-                BackgroundRest(url,null,"GET", new OnActivityEventer() {
+                webHttpClientCom.getInstance(instance).RestkHttpCall(url,null,"GET", new webHttpClientCom.WevEvent_SucData() {
                     @Override
-                    public void onSuc() {
+                    public void onSuc(byte[] data) {
                         final DialogTxtEditor adialog = new DialogTxtEditor(instance);
                         adialog.addAction(getString(R.string.str_Ok), new QMUIDialogAction.ActionListener() {
                             @Override
@@ -230,9 +222,9 @@ public class MyShareList extends BaseActivity {
                                     url = "0";
                                 else
                                     url = "1";
-                                BackgroundRest("ClientEditUpload?rmtid="+rid+"&vip="+url,adialog.getEditText().getText().toString(),"PUT", new OnActivityEventer() {
+                                webHttpClientCom.getInstance(instance).RestkHttpCall("ClientEditUpload?rmtid="+rid+"&vip="+url,adialog.getEditText().getText().toString(),"PUT", new webHttpClientCom.WevEvent_SucString() {
                                     @Override
-                                    public void onSuc() {
+                                    public void onSuc(String res) {
                                         dialog.dismiss();
                                         RemoteInfo armt = new RemoteInfo();
                                         CfgData.GetRemoteFromText(armt,adialog.getEditText().getText().toString());
@@ -244,24 +236,10 @@ public class MyShareList extends BaseActivity {
                                             mysharelist.get(currindex).setDev(armt.dev);
                                         deviceAdapter.notifyDataSetChanged();
                                     }
-                                    @Override
-                                    public boolean onDodata(String res) {
-                                       return true;
-                                    }
                                 });
                             }
                         });
                         adialog.showEditor(mtxtstr);
-                    }
-                    @Override
-                    public boolean onDodata(String res) {
-                        mtxtstr = res;
-                        if(QMUILangHelper.isNullOrEmpty(res)){
-                            errstr = "err in the codes";
-                            return false;
-                        }else {
-                            return true;
-                        }
                     }
                 });
             }
@@ -270,16 +248,17 @@ public class MyShareList extends BaseActivity {
     }
 
     private void getModelData(){
-        BackgroundRest("clientGetList?userid="+String.valueOf(CfgData.userid),null,"GET", new OnActivityEventer() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall("clientGetList?userid="+String.valueOf(CfgData.userid),null,"GET", new webHttpClientCom.WevEvent_NoErr() {
             @Override
-            public void onSuc() {
+            public void onSuc(byte[] out) {
                 deviceAdapter.notifyDataSetChanged();
             }
+
             @Override
-            public boolean onDodata(String res) {
+            public boolean onDoData(byte[] res) {
                 mysharelist.clear();
                 try {
-                    Object json = new JSONTokener(res).nextValue();
+                    Object json = new JSONTokener(new String(res)).nextValue();
                     if(json instanceof JSONArray) {
                         JSONArray jsonAll = (JSONArray) json;
                         for (int i = 0; i < jsonAll.length(); i++) {
@@ -301,7 +280,6 @@ public class MyShareList extends BaseActivity {
                     return true;
                 }catch (JSONException e) {
                     e.printStackTrace();
-                    errstr = e.getMessage();
                 }
                 return false;
             }

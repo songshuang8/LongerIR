@@ -111,11 +111,10 @@ public class SynMyRemoteThread extends Thread{
             }
         }
         String txtstr = CfgData.getRemoteTxtFile(remote,btnlist);
-        byte[] data= null;
-        String err = null;
-        if(webHttpClientCom.getInstance(null).ThreadHttpCall("appUpload?userid="+ CfgData.userid,txtstr,"POST", data,err)){
+        webHttpClientCom.HttpRet ret = webHttpClientCom.getInstance(null).ThreadHttpCall("appUpload?userid="+ CfgData.userid,txtstr,"POST");
+        if(ret.result){
                try {
-                    JSONObject jsonObj = new JSONObject(new String(data));
+                    JSONObject jsonObj = new JSONObject(new String(ret.data));
                     remote.rid = jsonObj.getInt("id");
                     CfgData.AppendoOrEditMyFile(ctx,remote,null);
                 }catch (JSONException e) {

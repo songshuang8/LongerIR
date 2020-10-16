@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 import clurc.net.longerir.R;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
+import clurc.net.longerir.data.webHttpClientCom;
 
 public class UserReset extends BaseActivity {
     EditText mPass1;
@@ -54,8 +55,8 @@ public class UserReset extends BaseActivity {
                     return;
                 }
                 //username,mPass1.getText().toString()
-                BackgroundRest("newaddorresetpswd?EMAIL=" + username
-                        + "&PASWD=" + mPass1.getText().toString(),null,"GET", new OnActivityEventer() {
+                webHttpClientCom.getInstance(instance).RestkHttpCall("newaddorresetpswd?EMAIL=" + username
+                        + "&PASWD=" + mPass1.getText().toString(),null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
                     @Override
                     public void onSuc() {
                         tipDialog = new QMUITipDialog.Builder(instance)
@@ -76,7 +77,6 @@ public class UserReset extends BaseActivity {
                         if(res.equals("ok"))
                             return true;
                         else {
-                            errstr = getString(R.string.str_try);
                             return false;
                         }
                     }

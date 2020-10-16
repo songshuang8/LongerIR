@@ -21,6 +21,7 @@ import java.util.List;
 import clurc.net.longerir.R;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
+import clurc.net.longerir.data.webHttpClientCom;
 
 public class SelectDeviceType2 extends BaseActivity {
     private ListView devlist;
@@ -59,7 +60,7 @@ public class SelectDeviceType2 extends BaseActivity {
             }
         });
         if(CfgData.devitems.size()==0) {
-            BackgroundRest("search_devs?data=" + CfgData.dataidx,null,"GET", new OnActivityEventer() {
+            webHttpClientCom.getInstance(instance).RestkHttpCall("search_devs?data=" + CfgData.dataidx,null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
                 @Override
                 public void onSuc() {
                     CopyThereItems();
@@ -70,7 +71,6 @@ public class SelectDeviceType2 extends BaseActivity {
                     if (CfgData.DoChkdevs(res)) {
                         return true;
                     }else {
-                        errstr = getString(R.string.str_try);
                         return false;
                     }
                 }

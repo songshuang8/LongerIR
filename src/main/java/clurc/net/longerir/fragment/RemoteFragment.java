@@ -245,16 +245,9 @@ public class RemoteFragment extends BaseFragment {
                                                 CfgData.DeleteMyRemote(context,currindex);
                                                 deviceAdapter.notifyDataSetChanged();
                                                 if(src.rid>0){
-                                                    // syn my data
-                                                    new Thread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            byte[] data = null;
-                                                            String err = null;
-                                                            webHttpClientCom.getInstance(null).ThreadHttpCall("appRemote/"+ src.rid,null,"DELETE",data,err);
-                                                        }
-                                                    }).start();
+                                                    webHttpClientCom.getInstance(null).RestkHttpCallBase("appRemote/"+ src.rid,null,"DELETE",null);
                                                 }
+
                                             }
                                         })
                                         .create(com.qmuiteam.qmui.R.style.QMUI_Dialog).show();
@@ -289,7 +282,7 @@ public class RemoteFragment extends BaseFragment {
                                             new Thread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    webHttpClientCom.getInstance(null).Slient_UploadRemote(src);
+                                                    webHttpClientCom.getInstance(null).thread_UploadRemote(src,false);
                                                 }
                                             }).start();
                                         }else{
@@ -308,7 +301,7 @@ public class RemoteFragment extends BaseFragment {
                                     ((Activity)context).startActivity(intent);
                                 }else if(src.isAc==CfgData.AcLear){
                                     List<BtnInfo> btnlist = CfgData.getBtnInfo(context,src.id);
-                                    HttpRest("getTransEepAc", CfgData.getRemoteTxtFile(src, btnlist), "POST", new OnActivityEventer() {
+                                    webHttpClientCom.getInstance((Activity)context).RestkHttpCall("getTransEepAc", CfgData.getRemoteTxtFile(src, btnlist), "POST", new webHttpClientCom.WevEvent_SucData() {
                                         @Override
                                         public void onSuc(byte[] out) {
                                             Intent intent = new Intent();
@@ -331,7 +324,7 @@ public class RemoteFragment extends BaseFragment {
                                     DialogShowImage adiag = new DialogShowImage((Activity)context,qrImage);
                                     adiag.CustomShow();
                                 }else {
-                                    webHttpClientCom.getInstance((Activity) context).Rest_UploadRemote(src, "appUpload?userid=", new webHttpClientCom.RestOnAppEvent() {
+                                    webHttpClientCom.getInstance((Activity) context).Rest_UploadRemote(src, false,new webHttpClientCom.RestOnAppEvent() {
                                         @Override
                                         public void onSuc() {
                                             if(src.rid<0)return;
@@ -366,15 +359,10 @@ public class RemoteFragment extends BaseFragment {
                                         break;
                                     }
                                 }
-                                HttpRest("ClientUpload?USERID=" + CfgData.userid, CfgData.getRemoteTxtFile(src,btnlist), "POST", new OnActivityEventer() {
+                                webHttpClientCom.getInstance((Activity) context).Rest_UploadRemote(src,true, new webHttpClientCom.RestOnAppEvent() {
                                             @Override
-                                            public void onSuc(byte[] out) {
-                                                String res = new String(out);
-                                                if(res.contains("ok")){
-                                                    showMessage(getString(R.string.str_info),getString(R.string.str_share_ok));
-                                                }else{
-                                                    showMessage(getString(R.string.str_err),getString(R.string.str_share_err));
-                                                }
+                                            public void onSuc() {
+                                                showMessage(getString(R.string.str_info),getString(R.string.str_share_ok));
                                             }
                                         });
                                 break;
@@ -428,7 +416,7 @@ public class RemoteFragment extends BaseFragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        webHttpClientCom.getInstance(null).Slient_UploadRemote(src);
+                        webHttpClientCom.getInstance(null).thread_UploadRemote(src,false);
                     }
                 }).start();
                 break;

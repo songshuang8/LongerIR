@@ -17,6 +17,7 @@ import clurc.net.longerir.MainActivity;
 import clurc.net.longerir.R;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
+import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.manager.QDPreferenceManager;
 
 public class UserRegister extends BaseActivity {
@@ -84,8 +85,8 @@ public class UserRegister extends BaseActivity {
                 }
                 if(vcode==null)
                     vcode = CfgData.CreateVeryCode();
-                BackgroundRest("sendveryfycode?EMAIL=" + mEdtName.getText().toString()
-                        + "&VCODE=" + vcode,null,"GET", new OnActivityEventer() {
+                webHttpClientCom.getInstance(instance).RestkHttpCall("sendveryfycode?EMAIL=" + mEdtName.getText().toString()
+                        + "&VCODE=" + vcode,null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
                     @Override
                     public void onSuc() {
                         tipDialog = new QMUITipDialog.Builder(instance)
@@ -106,7 +107,6 @@ public class UserRegister extends BaseActivity {
                         if(res.equals("ok"))
                             return true;
                         else {
-                            errstr = getString(R.string.str_try);
                             return false;
                         }
                     }

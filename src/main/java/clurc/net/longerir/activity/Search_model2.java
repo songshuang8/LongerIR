@@ -138,7 +138,7 @@ public class Search_model2 extends BaseActivity {
         }catch (UnsupportedEncodingException e){
             param += seldev;
         }
-        BackgroundRest(param,null,"GET", new OnActivityEventer() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall(param,null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
             @Override
             public void onSuc() {
                 currpos = 1;
@@ -169,7 +169,6 @@ public class Search_model2 extends BaseActivity {
                     return true;
                 }catch (JSONException e) {
                     e.printStackTrace();
-                    errstr = e.getMessage();
                 }
                 return false;
             }
@@ -238,7 +237,7 @@ public class Search_model2 extends BaseActivity {
                     mbotom.setVisibility(View.VISIBLE);
                 }else {
                     if (txtbtns.size() == 0) {
-                        errstr = "err in the server";
+                        String errstr = "err in the server";
                         ShowDialog(errstr);
                         return;
                     }

@@ -210,25 +210,18 @@ public class UserCenter extends BaseActivity {
     }
 
     private void DoMobileLogin(String token){
-        webHttpClientCom.getInstance(instance).RestkHttpCall("getMobile?serial=" + CfgData.mobileserial, token, "POST", new webHttpClientCom.RestOnWebPutEvent() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall("getMobile?serial=" + CfgData.mobileserial, token, "POST", new webHttpClientCom.WevEvent_SucString(){
                     @Override
-                    public void onSuc(byte[] out) {
-                        String json = new String(out);
-                        Log.w(TAG_SS,json);
+                    public void onSuc(String res) {
+                        Log.w(TAG_SS,res);
                         try {
-                            JSONObject jb = new JSONObject(BugJSONTokener(json));
+                            JSONObject jb = new JSONObject(BugJSONTokener(res));
                             if(jb.getInt("result")==0){
                                 Log.w(TAG_SS,jb.getString("mobile"));
                             }
                         }catch (JSONException e){
                             e.printStackTrace();
                         }
-                    }
-
-                    @Override
-                    public void onFail(String res) {
-                        if(res!=null && res.length()>0)
-                            Log.w(TAG_SS,res);
                     }
                 });
     }
@@ -269,7 +262,7 @@ public class UserCenter extends BaseActivity {
                 for (int i = 0; i < CfgData.myremotelist.size(); i++) {
                     if(isInterrupted())return;
                     if(CfgData.myremotelist.get(i).rid<1)
-                        webHttpClientCom.getInstance(UserCenter.this).thread_UploadRemote(CfgData.myremotelist.get(i));
+                        webHttpClientCom.getInstance(UserCenter.this).thread_UploadRemote(CfgData.myremotelist.get(i),false);
                 }
 
                 if(isInterrupted())return;
@@ -299,12 +292,11 @@ public class UserCenter extends BaseActivity {
 //                    e.printStackTrace();
 //                }
                 //pull
-                byte[] data = null;
-                String err = null;
-                if(webHttpClientCom.getInstance(UserCenter.this).ThreadHttpCall("appRemote?where=Author="+ CfgData.userid,null,"GET",data,err)) {
+                webHttpClientCom.HttpRet ret = webHttpClientCom.getInstance(UserCenter.this).ThreadHttpCall("appRemote?where=Author="+ CfgData.userid,null,"GET");
+                if(ret.result) {
                     if (isInterrupted()) return;
                     try {
-                        JSONArray jsonAll = new JSONArray(new String(data));
+                        JSONArray jsonAll = new JSONArray(new String(ret.data));
                         for (int i = 0; i < jsonAll.length(); i++) {
                             JSONObject jsonsingle = (JSONObject) jsonAll.get(i);
                             int aid = jsonsingle.getInt("ID");

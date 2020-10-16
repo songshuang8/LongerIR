@@ -172,7 +172,7 @@ public class Search_model extends BaseActivity {
                 param += strselectedpp;
             }
         }
-        BackgroundRest(param,null,"GET", new OnActivityEventer() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall(param,null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
             @Override
             public void onSuc() {
                 showListView();
@@ -203,7 +203,6 @@ public class Search_model extends BaseActivity {
                     return true;
                 }catch (JSONException e) {
                     e.printStackTrace();
-                    errstr = e.getMessage();
                 }
                 return false;
             }

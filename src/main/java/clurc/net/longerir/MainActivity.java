@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void dochkUpdate(String zonestr){
         Log.w(TAG_SS,"===>chkupdate...");
-        webHttpClientCom.getInstance(this).RestkHttpCall("www/longerir.txt?"+zonestr, null, "GET", new webHttpClientCom.RestOnWebPutEvent() {
+        webHttpClientCom.getInstance(MainActivity.this).RestkHttpCallBase("www/longerir.txt?"+zonestr, null, "GET", new webHttpClientCom.WevEvent() {
             @Override
             public void onSuc(byte[] out) {
                 String src = new String(out);
@@ -275,32 +275,33 @@ public class MainActivity extends AppCompatActivity {
                 }
                 Log.w(TAG_SS,"==============>update:"+m+","+versioncode);
                 if(m<=versioncode)return;
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        new QMUIDialog.MessageDialogBuilder(MainActivity.this)
-                                .setTitle(MainActivity.this.getString(R.string.str_info))
-                                .setMessage(MainActivity.this.getString(R.string.str_foundnewversion))
-                                .addAction(MainActivity.this.getString(R.string.str_cancel), new QMUIDialogAction.ActionListener() {
-                                    @Override
-                                    public void onClick(QMUIDialog dialog, int index) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .addAction(0, MainActivity.this.getString(R.string.str_Ok), QMUIDialogAction.ACTION_PROP_NEGATIVE, new QMUIDialogAction.ActionListener() {
-                                    @Override
-                                    public void onClick(QMUIDialog dialog, int index) {
-                                        dialog.dismiss();
-                                        checkIsAndroid(sarr[1]);
-                                    }
-                                })
-                                .create(com.qmuiteam.qmui.R.style.QMUI_Dialog).show();
-                    }
-                });
+                new QMUIDialog.MessageDialogBuilder(MainActivity.this)
+                        .setTitle(MainActivity.this.getString(R.string.str_info))
+                        .setMessage(MainActivity.this.getString(R.string.str_foundnewversion))
+                        .addAction(MainActivity.this.getString(R.string.str_cancel), new QMUIDialogAction.ActionListener() {
+                            @Override
+                            public void onClick(QMUIDialog dialog, int index) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .addAction(0, MainActivity.this.getString(R.string.str_Ok), QMUIDialogAction.ACTION_PROP_NEGATIVE, new QMUIDialogAction.ActionListener() {
+                            @Override
+                            public void onClick(QMUIDialog dialog, int index) {
+                                dialog.dismiss();
+                                checkIsAndroid(sarr[1]);
+                            }
+                        })
+                        .create(com.qmuiteam.qmui.R.style.QMUI_Dialog).show();
             }
 
             @Override
-            public void onFail(boolean netfaulre, String res) {
+            public void onFail(String res) {
 
+            }
+
+            @Override
+            public boolean onDoData(byte[] out) {
+                return true;
             }
         });
     }

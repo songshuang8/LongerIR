@@ -24,6 +24,7 @@ import clurc.net.longerir.MainActivity;
 import clurc.net.longerir.R;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
+import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.manager.QDPreferenceManager;
 
 public class UserLogin extends BaseActivity {
@@ -83,7 +84,7 @@ public class UserLogin extends BaseActivity {
                     urlparam = "ClientLoginHz?LogonName=" + u
                             + "&Password=" + p;
                 }
-                BackgroundRest(urlparam,null,"GET", new OnActivityEventer() {
+                webHttpClientCom.getInstance(instance).RestkHttpCall(urlparam,null,"GET", new webHttpClientCom.WevEvent_NoErrString() {
                     @Override
                     public void onSuc() {
                         QDPreferenceManager.getInstance(instance).setAutoLogin(mAutoLogin.isChecked());
@@ -121,7 +122,6 @@ public class UserLogin extends BaseActivity {
                         }catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        errstr = getString(R.string.str_try);
                         return false;
                     }
                 });
