@@ -628,7 +628,7 @@ public class webHttpClientCom {
                 String s = CfgData.getButtonsString(buttons);
                 Log.w(TAG_SS,"===>eep sorce:"+s+";"+chip+","+0);
                 final HttpRet ret = ThreadHttpCall("getTransEep?chip=" + chip + "&force=0", s, "POST");
-                if(ret.result==false) {
+                if(ret.result) {
                     context.runOnUiThread(new Runnable() {
                         public void run() {
                             tipDialog.dismiss();
