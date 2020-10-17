@@ -1,4 +1,6 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
     signingConfigs {
@@ -20,8 +22,8 @@ android {
         applicationId "clurc.net.longerir"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 23
-        versionName '1.23'
+        versionCode 25
+        versionName '1.25'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         signingConfig signingConfigs.debug
@@ -52,7 +54,11 @@ android {
             signingConfig signingConfigs.debug
         }
     }
-
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    ndkVersion '21.3.6528147'
 }
 
 dependencies {
@@ -62,10 +68,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.qmuiteam:qmui:2.0.0-alpha10'
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
-    implementation 'com.github.pinguo-zhouwei:MZBannerView:v2.0.2'
+    implementation 'com.github.maning0303:MNZXingCode:V2.1.4'
 
-    implementation 'com.github.maning0303:MNZXingCode:V2.1.3'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
 }

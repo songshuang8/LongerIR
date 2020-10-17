@@ -7,6 +7,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,8 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
@@ -24,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import clurc.net.longerir.R;
+import clurc.net.longerir.adapt.ModelListAdapt;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.BtnModelData;
 import clurc.net.longerir.data.CfgData;
@@ -37,7 +37,7 @@ import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
 //空调模板放第一个，不可修改删除
 public class ActivityModelList extends BaseActivity {
     private RecyclerView collist;
-    private BtnModelAdapt modeladapt;
+    private ModelListAdapt modeladapt;
 
     private List<DataModelInfo> models;
     private int temp;
@@ -125,74 +125,31 @@ public class ActivityModelList extends BaseActivity {
                 amodel.btns = BtnModelData.getBtnInfo(instance,amodel.id,false);
         }
         collist.setLayoutManager(new GridLayoutManager(instance,3));
-        modeladapt = new BtnModelAdapt(R.layout.activity_model_adapt_list, models);
+        modeladapt = new ModelListAdapt(models, instance, new ModelListAdapt.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                selected = position;
+                if(canselect){
+                    Intent intent=new Intent();
+                    intent.putExtra("selmodelidx",selected-1);
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
+                }else {
+                    showMenu();
+                }
+            }
+        }, new ModelListAdapt.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                //长按弹出菜单
+                if(canselect)return;
+                selected = position;
+                if (canselect && selected == 0)
+                    return;
+                showMenu();
+            }
+        });
         collist.setAdapter(modeladapt);
-    }
-
-    class BtnModelAdapt extends BaseQuickAdapter<DataModelInfo, BaseViewHolder> {
-        public BtnModelAdapt(int layoutResId, @Nullable List<DataModelInfo> data) {
-            super(layoutResId, data);
-        }
-        @Override
-        protected void convert(final BaseViewHolder helper, DataModelInfo item) {
-            int pos = helper.getAdapterPosition();
-
-            helper.setText(R.id.tvTitle,item.strdesc);
-            ViewDragGridReadOnly dragview = (ViewDragGridReadOnly)helper.getView(R.id.btnpreview);
-
-            if(dragview.getChildCount()==0) //? 已经添加过？？
-            if(item.id<0) {  //作为空调
-                dragview.setIsacview(true);
-                dragview.setCOL_CNT(1);
-                dragview.setTag(pos);
-                View acview = LayoutInflater.from(instance).inflate(R.layout.ac_view_model, null,false);
-                dragview.addView(acview);
-                dragview.invalidate();
-            }else {
-                dragview.setCOL_CNT(item.colcnt);
-                dragview.setTag(pos);
-                for (int i = 0; i < item.btns.size(); i++) {
-                    RemoteBtnView image = new RemoteBtnView(instance,
-                            getResources().getColor(android.R.color.darker_gray),
-                            getResources().getColor(android.R.color.holo_blue_dark), false);
-                    image.setBtnName(item.btns.get(i).btnname);
-                    image.setCustomName(item.btns.get(i).btnname);
-                    image.setRownCol(item.btns.get(i).cols, item.btns.get(i).rows);
-                    image.setmShapeKinds(RemoteBtnView.ShapeKinds.values()[item.btns.get(i).kinds]);
-                    image.setKeyidx(item.btns.get(i).keyidx);
-                    image.setSno(item.btns.get(i).sid);
-                    image.setmSelected(true);
-                    dragview.addView(image);
-                }
-            }
-            dragview.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selected = (int)v.getTag();
-                    if(canselect){
-                        Intent intent=new Intent();
-                        intent.putExtra("selmodelidx",selected-1);
-                        setResult(Activity.RESULT_OK, intent);
-                        finish();
-                    }else {
-                        showMenu();
-                    }
-                }
-            });
-            //长按弹出菜单
-            if(canselect==false) {
-                dragview.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        selected = (int) v.getTag();
-                        if (canselect && selected == 0)
-                            return true;
-                        showMenu();
-                        return true;
-                    }
-                });
-            }
-        }
     }
 
     private void showMenu(){

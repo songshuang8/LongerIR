@@ -18,8 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
@@ -124,7 +122,7 @@ public class SearchHis  extends BaseActivity {
     private void updateData(){
         hisarr = QDPreferenceManager.getInstance(instance).getSearHis();
         hisview.setLayoutManager(new GridLayoutManager(instance,3));
-        hisadatpe = new HisSearchAdapt(R.layout.listview_singletxt_2, hisarr);
+        hisadatpe = new HisSearchAdapt();
         hisview.setAdapter(hisadatpe);
     }
 
@@ -177,19 +175,35 @@ public class SearchHis  extends BaseActivity {
         });
     }
 
-    class HisSearchAdapt extends BaseQuickAdapter<String, BaseViewHolder> {
-
-        public HisSearchAdapt(int layoutResId, @Nullable List<String> data) {
-            super(layoutResId, data);
+    class HisSearchAdapt extends RecyclerView.Adapter<HisSearchAdapt.VH> {
+        @Override
+        public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+            //LayoutInflater.from指定写法
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.listview_singletxt_2, parent, false);
+            return new VH(v);
+        }
+        // 创建ViewHolder
+        class VH extends RecyclerView.ViewHolder{
+            public TextView mtitle;
+            public VH(View v) {
+                super(v);
+                mtitle = (TextView)v.findViewById(R.id.singleid);
+            }
         }
 
         @Override
-        protected void convert(final BaseViewHolder helper, String item) {
-            int pos = helper.getAdapterPosition();
+        public int getItemCount() {
+            return hisarr.size();
+        }
 
-            TextView atxt = helper.getView(R.id.singleid);
-            atxt.setText(item);
-            atxt.setOnClickListener(new View.OnClickListener() {
+        public HisSearchAdapt() {
+
+        }
+
+        @Override
+        public void onBindViewHolder(final VH holder, final int position) {
+            holder.mtitle.setText(hisarr.get(position));
+            holder.mtitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     DoBtnClick(((TextView)v).getText().toString());

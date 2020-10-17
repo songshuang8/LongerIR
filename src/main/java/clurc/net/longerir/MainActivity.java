@@ -2,17 +2,14 @@ package clurc.net.longerir;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,20 +41,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.TimeZone;
 import java.util.Vector;
 
 import clurc.net.longerir.Utils.MobileUUID;
 import clurc.net.longerir.data.BtnModelData;
 import clurc.net.longerir.data.CfgData;
-import clurc.net.longerir.data.modeldata.DataModelBtnInfo;
-import clurc.net.longerir.data.modeldata.DataModelInfo;
 import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.fragment.BaseFragment;
-import clurc.net.longerir.fragment.MallFragment;
 import clurc.net.longerir.fragment.PrcFragment;
 import clurc.net.longerir.fragment.RemoteFragment;
 

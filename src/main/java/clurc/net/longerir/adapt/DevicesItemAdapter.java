@@ -52,7 +52,7 @@ public class DevicesItemAdapter extends BaseAdapter {
         return position;
     }
 
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         //View view;
         if (convertView == null)
             convertView = mInflater.inflate(R.layout.listview_myremote, parent, false);
@@ -60,11 +60,12 @@ public class DevicesItemAdapter extends BaseAdapter {
         //    view = convertView;
        // }
         int pos = myidx.get(position);
-        RemoteInfo adev = myremotelistsearc.get(pos);
-        ((TextView) convertView.findViewById(R.id.tvdev)).setText(adev.dev);
-        ((TextView) convertView.findViewById(R.id.tvbrand)).setText(adev.pp);
-        ((TextView) convertView.findViewById(R.id.tvxh)).setText(adev.xh);
-
+        if(myremotelistsearc.size()>0 && pos<myremotelistsearc.size()) {
+            RemoteInfo adev = myremotelistsearc.get(pos);
+            ((TextView) convertView.findViewById(R.id.tvdev)).setText(adev.dev);
+            ((TextView) convertView.findViewById(R.id.tvbrand)).setText(adev.pp);
+            ((TextView) convertView.findViewById(R.id.tvxh)).setText(adev.xh);
+        }
         return convertView;
     }
 

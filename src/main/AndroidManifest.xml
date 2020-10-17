@@ -171,20 +171,6 @@
         </activity>
 
         <activity
-            android:name=".activity.MallCart"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
-        </activity>
-
-        <activity
-            android:name=".activity.MallDetail"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
-        </activity>
-
-        <activity
             android:name=".activity.ActivityModelEdit"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
