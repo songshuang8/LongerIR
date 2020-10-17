@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:gravity="center_vertical">
+
             <AutoCompleteTextView
                 android:id="@+id/editdevice"
                 android:layout_width="0dip"
@@ -33,7 +34,9 @@
                 android:completionThreshold="1"
                 android:dropDownHorizontalOffset="20dp"
                 android:ems="10"
-                android:gravity="center_vertical" >
+                android:gravity="center_vertical"
+                android:singleLine="true">
+
                 <requestFocus />
             </AutoCompleteTextView>
             <ImageButton
@@ -56,6 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
             android:layout_weight="1"
+            android:singleLine="true"
             android:text="@string/str_brand"
             android:textAlignment="textEnd" />
 
@@ -78,6 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
             android:layout_weight="1"
+            android:singleLine="true"
             android:text="@string/str_model"
             android:textAlignment="textEnd" />
 

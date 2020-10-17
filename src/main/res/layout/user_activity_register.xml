@@ -33,6 +33,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
                 android:hint="@string/str_email"
+                android:singleLine="true"
                 android:inputType="textEmailAddress"
                 android:text="" />
 
@@ -50,6 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="7"
                     android:ems="10"
+                    android:singleLine="true"
                     android:hint="@string/str_verifycode"
                     android:inputType="textPassword" />
 

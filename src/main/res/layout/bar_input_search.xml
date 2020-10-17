@@ -12,6 +12,7 @@
         android:layout_gravity="center_vertical"
         android:background="@color/qmui_config_color_white"
         android:ems="8"
+        android:singleLine="true"
         android:inputType="textPersonName" />
 
     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton

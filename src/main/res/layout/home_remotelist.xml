@@ -33,6 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="@string/str_filter"
+                    android:singleLine="true"
                     android:inputType="text" />
 
 
