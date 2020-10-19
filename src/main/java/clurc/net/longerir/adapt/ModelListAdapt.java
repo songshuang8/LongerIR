@@ -60,8 +60,10 @@ public class ModelListAdapt extends RecyclerView.Adapter<ModelListAdapt.VH> {
 
     @Override
     public void onBindViewHolder(final VH holder, final int position) {
-        if(models.size()==0 || position>=models.size())return;
-        if(holder.dragview.getChildCount()!=0)return;
+        holder.setIsRecyclable(false);
+//        if(models.size()==0 || position>=models.size())return;
+        if(holder.dragview.getChildCount()>0)
+            holder.dragview.removeAllViews();
         final DataModelInfo item = models.get(position);
         holder.mtitle.setText(item.strdesc);
         if(item.id<0) {  //作为空调
