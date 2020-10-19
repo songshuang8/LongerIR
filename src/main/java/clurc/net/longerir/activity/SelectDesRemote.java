@@ -154,6 +154,7 @@ public class SelectDesRemote extends BaseActivity {
 
         @Override
         public void onBindViewHolder(final VH holder, int position) {
+            holder.setIsRecyclable(false);
             if(showname.size()==0 || position>=showname.size())return;
             if(holder.mtitle.getText().toString()!=null && holder.mtitle.getText().toString().length()>0)return;
             String astr = showname.get(position);
@@ -225,9 +226,11 @@ public class SelectDesRemote extends BaseActivity {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder viewHolder, int i) {
-            viewHolder.mTextView.setText(CfgData.modellist.get(showidx.get(i)).name);
-            viewHolder.mImageView.setImageBitmap(createBitmapFromByteData(showidx.get(i)));
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+            viewHolder.setIsRecyclable(false);
+            int idx = showidx.get(position);
+            viewHolder.mTextView.setText(CfgData.modellist.get(idx).name);
+            viewHolder.mImageView.setImageBitmap(createBitmapFromByteData(idx));
         }
 
         @Override

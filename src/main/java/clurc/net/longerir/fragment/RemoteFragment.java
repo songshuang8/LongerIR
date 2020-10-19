@@ -313,8 +313,7 @@ public class RemoteFragment extends BaseFragment {
                                 }else{
                                     intent = new Intent();
                                     intent.setClass(context, SelectDesRemote.class);
-                                    intent.putExtra("pagesel", -1);
-                                    intent.putExtra("bonly", true);
+                                    intent.putExtra("iseltype", -1);
                                     ((Activity) context).startActivityForResult(intent, 21);
                                 }
                                 break;

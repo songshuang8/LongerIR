@@ -58,7 +58,7 @@
     <string name="str_nodev">No valid device</string>
     <string name="str_blue_in">Blueble Device Founded</string>
     <string name="str_pls_sel_remote">Please enter brand and model</string>
-    <string name="str_sel_desremote">Please select the remote control to be programmed</string>
+    <string name="str_sel_desremote">Select a programmable remote control</string>
     <string name="str_sel_device">Select what device want to program</string>
     <string name="str_sel_page">Please select where you want to program</string>
     <string name="str_sel_mys">Please select which you want to program</string>
