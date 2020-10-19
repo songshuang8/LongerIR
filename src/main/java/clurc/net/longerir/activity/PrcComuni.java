@@ -1,5 +1,6 @@
 package clurc.net.longerir.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.hardware.ConsumerIrManager;
 import android.media.MediaPlayer;
@@ -265,11 +266,12 @@ public class PrcComuni extends BaseActivity {
         mCircleProgressBar.setVisibility(View.VISIBLE);
         donghua.setVisibility(View.GONE);
         ///开始调用主转换函数
-        webHttpClientCom.getInstance(instance).WebGetEepData(CfgData.desbuttons, chip, new webHttpClientCom.RestOnEEpData() {
+        webHttpClientCom.getInstance(instance).RestkHttpCall("getTransEep?chip=" + chip + "&force=0",
+                CfgData.getButtonsString(CfgData.desbuttons), "POST", new webHttpClientCom.WevEvent_SucData() {
             @Override
-            public void onSuc(byte[] eep) {
+            public void onSuc(byte[] out) {
                 mCircleProgressBar.setProgress(0,false);
-                amoibleir = new MobileIrPort(instance,eep,mHandler);
+                amoibleir = new MobileIrPort(instance,out,mHandler);
                 amoibleir.DoStart();
             }
         });
@@ -292,13 +294,14 @@ public class PrcComuni extends BaseActivity {
     }
 
     private void PrepareDataAndDown(int rmttype){
-        webHttpClientCom.getInstance(instance).WebGetEepData(CfgData.desbuttons, rmttype, new webHttpClientCom.RestOnEEpData() {
-            @Override
-            public void onSuc(byte[] eep) {
-                mCircleProgressBar.setProgress(0,false);
-                SsSerivce.getInstance().setRRCStart(eep);
-            }
-        });
+        webHttpClientCom.getInstance(instance).RestkHttpCall("getTransEep?chip=" + rmttype + "&force=0",
+                CfgData.getButtonsString(CfgData.desbuttons), "POST", new webHttpClientCom.WevEvent_SucData() {
+                    @Override
+                    public void onSuc(byte[] out) {
+                        mCircleProgressBar.setProgress(0,false);
+                        SsSerivce.getInstance().setRRCStart(out);
+                    }
+                });
     }
 
     @Override

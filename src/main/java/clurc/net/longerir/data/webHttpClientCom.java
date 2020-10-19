@@ -609,47 +609,6 @@ public class webHttpClientCom {
         });
     }
 
-    public interface RestOnEEpData{
-        void onSuc(byte[] eep);
-    }
-
-    public void WebGetEepData(final List<IrButton> buttons,final int chip,final RestOnEEpData aev){
-        final QMUITipDialog tipDialog = new QMUITipDialog.Builder(context)
-                .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                .setTipWord(context.getString(R.string.str_wait))
-                .create();
-        tipDialog.show();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ///开始调用主转换函数
-                Log.w(TAG_SS, "芯片类型："+chip);
-                //
-                String s = CfgData.getButtonsString(buttons);
-                Log.w(TAG_SS,"===>eep sorce:"+s+";"+chip+","+0);
-                final HttpRet ret = ThreadHttpCall("getTransEep?chip=" + chip + "&force=0", s, "POST");
-                if(ret.result) {
-                    context.runOnUiThread(new Runnable() {
-                        public void run() {
-                            tipDialog.dismiss();
-                            aev.onSuc(ret.data);
-                        }
-                    });
-                }else{
-                    context.runOnUiThread(new Runnable() {
-                        public void run() {
-                            tipDialog.dismiss();
-                            if (ret.err==null)
-                                static_showMessage( getString(R.string.str_err), getString(R.string.str_err_net));
-                            else if (ret.err.length() > 0)
-                                static_showMessage( getString(R.string.str_err), ret.err);
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
-
     public class HttpRet{
         public boolean result;
         public byte[] data;
