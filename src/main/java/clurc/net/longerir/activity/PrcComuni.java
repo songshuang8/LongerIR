@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -45,6 +46,7 @@ public class PrcComuni extends BaseActivity {
     private int chipkind;
 
     private MobileIrPort amoibleir = null;
+    private boolean cancel = false;
 
     @Override
     public void getViewId() {
@@ -126,6 +128,7 @@ public class PrcComuni extends BaseActivity {
                         AudioPortDown();
                     }
                     mbtn.setVisibility(View.GONE);
+                    cancel = false;
                 }else{
                     tips.setText(getString(R.string.str_nodev));
                     showMessage(null,getString(R.string.str_nodev));
@@ -320,11 +323,33 @@ public class PrcComuni extends BaseActivity {
             donghua.setVisibility(View.VISIBLE);
             mbtn.setVisibility(View.VISIBLE);
             Toast.makeText(instance, getString(R.string.str_prcsuc), Toast.LENGTH_SHORT).show();
+            cancel = false;
         }else if(percent>0){
+            if(cancel)return;
             if(mCircleProgressBar.getVisibility()==View.GONE)
                 mCircleProgressBar.setVisibility(View.VISIBLE);
             if(donghua.getVisibility()==View.VISIBLE)
                 donghua.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK ){
+            if(mbtn.getVisibility()==View.GONE){
+                cancel = true;
+                SsSerivce.getInstance().irStop();
+                if(amoibleir!=null)
+                    if(amoibleir.getActived())
+                        amoibleir.setCancel();
+                mCircleProgressBar.setVisibility(View.GONE);
+                donghua.setVisibility(View.VISIBLE);
+                mbtn.setVisibility(View.VISIBLE);
+                return false;
+            }else{
+                return super.onKeyDown(keyCode, event);
+            }
+        }
+		return super.onKeyDown(keyCode, event);
     }
 }
