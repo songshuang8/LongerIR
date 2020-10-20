@@ -106,13 +106,12 @@ public class DragGridViewLearn  extends ViewGroup implements View.OnTouchListene
                 }
                 flash_cnt = 0;
             }
-            onLayout(true, getLeft(), getTop(), getRight(), getBottom());
+            refreshchild(getLeft(), getTop(), getRight(), getBottom());
             handler.postDelayed(this, 50);
         }
     };
 
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    private void refreshchild(int l, int t, int r, int b){
         childSize = Math.round(((r - l) / COL_CNT) * childRatio);
         padding = ((r - l) - (childSize * COL_CNT)) / (COL_CNT + 1);
         for (int i = 0; i < getChildCount(); i++) {
@@ -120,6 +119,11 @@ public class DragGridViewLearn  extends ViewGroup implements View.OnTouchListene
                 toLayOut(i);
             }
         }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        refreshchild(l,t,r,b);
     }
 
     private void toLayOut(int vidx){

@@ -67,7 +67,7 @@ extern "C"
 JNIEXPORT jintArray JNICALL
 Java_clurc_net_longerir_MainActivity_irGetIRDataByRaw(
         JNIEnv *env,
-        jobject /* this */,
+        jclass clazz,
         jbyteArray rawbuf,jint rawlen,jint pressbtn,jint pressval) {
     jbyte *buffer = env->GetByteArrayElements(rawbuf,NULL);
     jintArray ret=NULL;
@@ -101,54 +101,6 @@ Java_clurc_net_longerir_MainActivity_irGetIRDataByRaw(
     free(irHighLow);
     env->ReleaseByteArrayElements(rawbuf,buffer,0);
     return ret;
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_clurc_net_longerir_MainActivity_setMobileId(
-        JNIEnv *env,
-        jobject ctx,
-        jstring astr) {
-    int len,m;
-    const char *temp = env->GetStringUTFChars(astr, NULL);
-    if(NULL == astr)return ;
-
-    len = strlen(temp);
-    if(len> (sizeof(mesi)-6))
-        len = sizeof(mesi)-6;
-    memset(mesi,0,sizeof(mesi));
-    sprintf(mesi,"&id=");
-    m = 4;
-    for(int i=0;i<len;i++){
-        if(temp[i]>=0x30 && temp[i]<=0x39){
-            mesi[m]=temp[i];
-            m++;
-        }else if(temp[i]>=0x41 && temp[i]<=0x5a){
-            mesi[m]=temp[i];
-            m++;
-        }else if(temp[i]>=0x61 && temp[i]<=0x7a){
-            mesi[m]=temp[i];
-            m++;
-        }
-    }
-    env->ReleaseStringUTFChars(astr, temp);
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_clurc_net_longerir_MainActivity_setLangugeId(
-        JNIEnv *env,
-        jobject ctx,
-        jstring alan) {
-    int len,m;
-    const char *temp = env->GetStringUTFChars(alan, NULL);
-    if(NULL == alan)return ;
-    len = strlen(temp);
-    if(len> (sizeof(mlanguiage)-6))
-        len = (sizeof(mlanguiage)-6);
-    memset(mlanguiage,0, sizeof(mlanguiage));
-    sprintf(mlanguiage,"&ln=%s",temp);
-    env->ReleaseStringUTFChars(alan, temp);
 }
 
 extern "C"
@@ -196,7 +148,7 @@ extern "C"
 JNIEXPORT jintArray JNICALL
 Java_clurc_net_longerir_MainActivity_irGsGetData(
         JNIEnv *env,
-        jobject /* this */,
+        jclass clazz,
         jlongArray parambuf,jint pramlen,jint pid) {
     AcFileTitle title;
     IrItem gsinfo;
@@ -271,7 +223,7 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_clurc_net_longerir_MainActivity_irSetStatus(
         JNIEnv *env,
-        jobject /* this */,jbyteArray val) {
+        jclass clazz,jbyteArray val) {
     jbyte *buffer = env->GetByteArrayElements(val,NULL);
     if(buffer == NULL)return;
     for(int i=0;i<BTN_COUNT;i++)
@@ -283,7 +235,7 @@ extern "C"
 JNIEXPORT jbyteArray JNICALL
 Java_clurc_net_longerir_MainActivity_irGetStatus(
         JNIEnv *env,
-        jobject /* this */) {
+        jclass clazz) {
     jbyteArray ret;
     unsigned char *buf = (unsigned char *)malloc(BTN_COUNT);
     for(int i=0;i<BTN_COUNT;i++)
@@ -298,7 +250,7 @@ extern "C"
 JNIEXPORT jint JNICALL
 Java_clurc_net_longerir_MainActivity_irGetCurrentFreq(
         JNIEnv *env,
-        jobject /* this */) {
+        jclass clazz) {
     return iFreq;
 }
 //---------------------------------------------key db
@@ -430,112 +382,6 @@ size_t PostDispose(char *buffer, size_t size, size_t nmemb, void *userdata)
     memcpy(recv_buf+recv_len,buffer,bytelen);
     recv_len +=bytelen;
     return bytelen;
-}
-
-bool myhttp_get(const char *param) {
-    bool ret = false;
-    int postlen;
-    char *tbuf1 = (char *) malloc(URL_TMPBUFLEN);
-    char *parammimi = (char *) malloc(URL_TMPBUFLEN);
-
-    memset(tbuf1, 0, URL_TMPBUFLEN);
-    postlen = endcodingur(param, (unsigned char *) tbuf1, URL_TMPBUFLEN);
-    //LOGI("url=%s,%s",tbuf1,tbuf2);
-    memset(parammimi, 0, URL_TMPBUFLEN);
-    //sprintf(parammimi, "http://192.168.2.5/remotedata3?ver=3");
-    //sprintf(parammimi, "http://10.0.2.2/remotedata3?ver=3");
-    sprintf(parammimi, "https://sunglesoft.com/remotedata3?ver=2");
-    if(strlen(mesi)>0) {
-        strcat(parammimi,mesi);
-    }
-    if(strlen(mlanguiage)>0) {
-        strcat(parammimi,mlanguiage);
-    }
-///---------------------------------------------
-/*
-    recv_len = 0;
-    HttpPostModule *post = new HttpPostModule();
-    post->SetTimeOut(6);
-    post->SetHttpHead("Content-Type:application/json;charset=UTF-8");
-    post->SetWriteFunction(PostDispose);
-    post->SetURL(parammimi);
-    post->SetGzip();
-    post->AddPostString(tbuf1);
-    int nRet = post->SendPostRequest();
-    free(post);
-    if (nRet == 0){
-        LOGI("post success!");
-        ret = true;
-    }else
-        LOGE("post error code:%d", nRet);
-        */
-///----------------------------------------------------
-    free(tbuf1);
-    free(parammimi);
-    return ret;
-}
-
-extern "C"
-JNIEXPORT jintArray JNICALL
-Java_clurc_net_longerir_MainActivity_acGetIRData(
-        JNIEnv *env,
-        jobject /* this */,
-        jstring p0,jint powval) {
-    jintArray ret=NULL;
-    bool bSuc;
-
-    if(biniSuc != 452145)return ret;
-
-    status.pressbtn = 0;
-    status.pressval = powval;
-    status.status[0]=status.pressval;
-    //
-    const char *param0 = env->GetStringUTFChars(p0, NULL);
-    bSuc = myhttp_get(param0);
-    env->ReleaseStringUTFChars(p0, param0);
-
-    if(!bSuc || recv_len<32)
-        return  ret;
-    if(recv_len<8)
-        return ret;
-    //----------------------------------------------------------
-    int *irHighLow = (int *)malloc(sizeof(int)*1024*2*8);
-    int irlen =0;
-    //---
-    AcDecoder * decoder = new AcDecoder(recv_buf,recv_len);
-    decoder->setStatus(&status);
-    bool bsuc = decoder->getIRData(irHighLow,&irlen);
-    if(!bsuc)irlen=0;
-    delete decoder;
-    //----------------------------------------------------------
-    if(irlen>0){
-        ret = env->NewIntArray(irlen);
-        env->SetIntArrayRegion(ret,0,irlen,irHighLow);
-    }
-    free(irHighLow);
-
-    return ret;
-}
-
-extern "C"
-JNIEXPORT jbyteArray JNICALL
-Java_clurc_net_longerir_MainActivity_cHttpGet(
-        JNIEnv *env,
-        jobject thiz,
-        jstring p0) {
-    jbyteArray ret=NULL;
-    bool bSuc;
-    if(biniSuc != 452145)return ret;
-
-    const char *param0 = env->GetStringUTFChars(p0, NULL);
-    bSuc = myhttp_get(param0);
-    env->ReleaseStringUTFChars(p0, param0);
-
-    if(bSuc && recv_len>0) {
-        ret = env->NewByteArray(recv_len);
-        env->SetByteArrayRegion(ret, 0, recv_len, (jbyte *) recv_buf);
-    }
-    return ret;
 }
 
 extern "C"

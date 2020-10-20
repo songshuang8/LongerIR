@@ -93,13 +93,12 @@ public class ViewDragGrid extends ViewGroup implements View.OnTouchListener, Vie
                     lastDelta = 0;
             }
             clampScroll();
-            onLayout(true, getLeft(), getTop(), getRight(), getBottom());
+            refreshchild(getLeft(), getTop(), getRight(), getBottom());
             handler.postDelayed(this, 50);
         }
     };
 
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    private void refreshchild(int l, int t, int r, int b){
         childSize = Math.round(((r - l) / COL_CNT) * childRatio);
         view_width = r - l;
         paddingH = (view_width - (childSize * COL_CNT)) / (COL_CNT + 1);
@@ -108,6 +107,11 @@ public class ViewDragGrid extends ViewGroup implements View.OnTouchListener, Vie
                 toLayOut(i);
             }
         }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        refreshchild(l,t,r,b);
     }
 
     private void toLayOut(int vidx){

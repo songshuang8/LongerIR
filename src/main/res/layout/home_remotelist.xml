@@ -118,7 +118,7 @@
                     android:clickable="true"
                     android:src="@mipmap/append"
                     app:qmui_border_color="@color/tab_panel_bg"
-                    app:qmui_border_width="8px"
+                    app:qmui_border_width="8dp"
                     app:qmui_is_circle="true"
                     app:qmui_selected_border_color="?attr/qmui_config_color_gray_4"
                     app:qmui_selected_border_width="1px"

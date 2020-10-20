@@ -388,20 +388,14 @@ public class MainActivity extends AppCompatActivity {
     public native void Init();
     public native void Cleanup();
     //--------------jini------------------------------------------------------------------------------
-    public native static int[] acGetIRData(String p0,int powval);
     public native static int[] irGetIRDataByRaw(byte[] rawbuf,int rawlen,int pressbtn,int pressval);
     public native static void irSetStatus(byte[] val);
     public native static byte[] irGetStatus();
-    //---------------------------------------------------
-    private native void setMobileId(String astr);
-    private native void setLangugeId(String alan);
 
     public native int irFileInit(Context context_object, String filedir);
     //--remote-----------------------------------
     public native static int[] irGsGetData(long[] param,int paralen,int pid);
     public native static int irGetCurrentFreq();
-    //
-    public native static byte[] cHttpGet(String p0);
 
     private void FileInitCheck(){
         if(!copyAssetFileToFiles("modelsys.db")){
