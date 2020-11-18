@@ -145,6 +145,7 @@ public class RemoteFragment extends BaseFragment {
                                                     @Override
                                                     public void onSuc() { //RemoteInfo aremote = new RemoteInfo();
                                                         Toast.makeText(context, getString(R.string.str_add_ok), Toast.LENGTH_SHORT).show();
+                                                        deviceAdapter.CheckChanged();
                                                         deviceAdapter.notifyDataSetChanged();
                                                     }
                                                 });
@@ -209,6 +210,7 @@ public class RemoteFragment extends BaseFragment {
         //ListView长按监听
         mlist.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
+                if(deviceAdapter.isTitle(position))return false;
                 currindex = deviceAdapter.getIdx(position);
                 QMUIBottomSheet.BottomListSheetBuilder bd = new QMUIBottomSheet.BottomListSheetBuilder(context);
                 bd.addItem(context.getString(R.string.str_delete),"0");
@@ -243,6 +245,7 @@ public class RemoteFragment extends BaseFragment {
                                             public void onClick(QMUIDialog dialog, int index) {
                                                 dialog.dismiss();
                                                 CfgData.DeleteMyRemote(context,currindex);
+                                                deviceAdapter.CheckChanged();
                                                 deviceAdapter.notifyDataSetChanged();
                                                 if(src.rid>0){
                                                     webHttpClientCom.getInstance(null).RestkHttpCallBase("appRemote/"+ src.rid,null,"DELETE",null);
@@ -379,6 +382,7 @@ public class RemoteFragment extends BaseFragment {
         mlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,final int position, long id) {
+                if(deviceAdapter.isTitle(position))return;
                 Intent intent = new Intent();
                 int idx = deviceAdapter.getIdx(position);
                 if(CfgData.myremotelist.get(idx).isAc==CfgData.AcPro)
@@ -441,14 +445,14 @@ public class RemoteFragment extends BaseFragment {
 
         CfgData.desbuttons = new ArrayList<IrButton>();
         //获取目标遥控器的按键信息
-        List<DesRemoteBtn> desbtns = MoudelFile.GetBtns(context, desidx, CfgData.modellist);
+        List<DesRemoteBtn> desbtns = MoudelFile.GetBtns(context, desidx);
         if (desbtns.size() == 0) {
             showMessage("Error", "Err found,cant not found des remote control's template");
             return false;
         }
 
         if(src.pp.equals("test") && src.xh.equals("test") && src.dev.equals("test")){
-            String[] pagename = MoudelFile.getMoudlePage(context,desidx,CfgData.modellist);
+            String[] pagename = CfgData.modellist.get(desidx).pageName;
             for (int i = 0; i < pagename.length; i++)
             for (int j = 0; j < 112; j++) {
                 int[] param = new int[3];
@@ -515,6 +519,7 @@ public class RemoteFragment extends BaseFragment {
 
     @Override
     public void DoOnResume(){
+        deviceAdapter.CheckChanged();
         deviceAdapter.notifyDataSetChanged();
     }
 }

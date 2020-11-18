@@ -44,7 +44,6 @@ public class ViewDragGridAdjust extends ViewGroup implements View.OnTouchListene
 
     private int touchmoved=-1;
     private int selected = -1;
-    private boolean aline = false;
     private Context context;
 
     public ViewDragGridAdjust(Context context, AttributeSet attrs) {
@@ -66,16 +65,6 @@ public class ViewDragGridAdjust extends ViewGroup implements View.OnTouchListene
     @Override
     public void addView(View child) {
         super.addView(child);
-    };
-
-    @Override
-    public void removeView(View chid) {
-        RemoteBtnView vr = (RemoteBtnView)chid;
-        int adelcol = vr.getCol();
-        int adelrow = vr.getRow();
-        super.removeView(chid);
-        ReArrangeRow(adelrow,adelcol);
-        selected = -1;
     };
 
     protected Runnable updateTask = new Runnable() {
@@ -145,26 +134,6 @@ public class ViewDragGridAdjust extends ViewGroup implements View.OnTouchListene
         else if (i >= dragged)
             return i + 1;
         return i;
-    }
-
-    protected int getFromCoorX(int posX) {
-        posX -= paddingW;
-        for (int i = 0; posX > 0; i++) {
-            if (posX < childSize)
-                return i;
-            posX -= (childSize + paddingW);
-        }
-        return -1;
-    }
-
-    protected int getFromCoorY(int posY) {
-        posY -= paddingH;
-        for (int i = 0; posY > 0; i++) {
-            if (posY < childSize)
-                return i;
-            posY -= (childSize + paddingH);
-        }
-        return -1;
     }
 
     @Override
@@ -269,15 +238,6 @@ public class ViewDragGridAdjust extends ViewGroup implements View.OnTouchListene
         return false;
     }
 
-    public void scrollToTop() {
-        scroll = 0;
-    }
-
-    public void scrollToBottom() {
-        scroll = Integer.MAX_VALUE;
-        clampScroll();
-    }
-
     protected void clampScroll() {
         int stretch = 3, overreach = getHeight() / 2;
         int max = getMaxScroll();
@@ -369,15 +329,18 @@ public class ViewDragGridAdjust extends ViewGroup implements View.OnTouchListene
     }
     //根据列号，行号获取位置
     protected Point getPointFromRowAndCol(int col,int row) {
-        if(aline){
-            return new Point(paddingH + (childSize + paddingH) * col,
-                    paddingH + (childSize + paddingH) * row - scroll);
-        }else {
-            int arowCnt = get_ARowCnt(row);
-            paddingW = (view_width - (childSize * arowCnt)) / (arowCnt + 1);
-            return new Point(paddingW + (childSize + paddingW) * col,
-                    paddingH + (childSize + paddingH) * row - scroll);
+        int arowCnt = 0;
+        int rowindex = 0;
+        for (int i = 0; i < getChildCount(); i++) {
+            RemoteBtnView v = getChileByIndex(i);
+            if(v.getRow()==row){
+                arowCnt++;
+                if(v.getCol()<col)rowindex++;
+            }
         }
+        paddingW = (view_width - (childSize * arowCnt)) / (arowCnt + 1);
+        return new Point(paddingW + (childSize + paddingW) * rowindex,
+                paddingH + (childSize + paddingH) * row - scroll);
     }
 
     public void setDataChangedListen(OnClickListener selectChangedListen) {
@@ -386,51 +349,6 @@ public class ViewDragGridAdjust extends ViewGroup implements View.OnTouchListene
 
     public void setCOL_CNT(int col_cnt){
         COL_CNT = col_cnt;
-    }
-
-    //当前行个数等于总列
-    private int get_ARowCnt(int arow){
-        int nowrow = 0;
-        for (int i = 0; i < getChildCount(); i++) {
-            RemoteBtnView v = getChileByIndex(i);
-            if(v.getRow()==arow){
-                nowrow++;
-            }
-        }
-        return nowrow;
-    }
-
-    private  void toAppendPosition(RemoteBtnView src,int willcol,int willrow){
-        int arowCnt = get_ARowCnt(willrow);
-        if(arowCnt==COL_CNT){
-            src.setRownCol(willcol,willrow);
-            return;
-        }
-        for (int i = 0; i < getChildCount(); i++) {
-            RemoteBtnView v = getChileByIndex(i);
-            if(v.getRow()==willrow){
-                if(v.getCol()>=willcol)
-                    v.setRownCol(v.getCol()+1,willrow);
-            }
-        }
-        src.setRownCol(willcol,willrow);
-    }
-
-    //当一行删除变化后整理
-    private void ReArrangeRow(int arow,int delcol){
-        int arowCnt = get_ARowCnt(arow);
-        for (int i = 0; i < getChildCount(); i++) {
-            RemoteBtnView v = getChileByIndex(i);
-            if(v.getRow()==arow){
-                if(v.getCol()>delcol){
-                    v.setRownCol(v.getCol()-1,arow);
-                }
-            }
-        }
-    }
-
-    public void setAline(boolean b) {
-        this.aline = b;
     }
 
     private void CopyProtocols(RemoteBtnView des,RemoteBtnView src){

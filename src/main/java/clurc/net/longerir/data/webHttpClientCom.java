@@ -41,7 +41,7 @@ import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
 
 public class webHttpClientCom {
     private Activity context;
-    private static String baseurl = "https://data.clurc.net/root/";
+    public static String baseurl = "https://data.clurc.net/root/";
     //private static String baseurl = "http://192.168.1.8:65500/root/";
     public static final int CONN_TIMEOUT = 60;
     public static final int READ_TIMEOUT = 60;
@@ -102,7 +102,7 @@ public class webHttpClientCom {
         }
     }
 
-    public void BackHttpGetFile(final String urlstr, final OnDownEventer aev) {
+    public void BackHttpGetFile(final String urlstr, final String filename,final OnDownEventer aev) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -120,7 +120,6 @@ public class webHttpClientCom {
                     InputStream is = urlConn.getInputStream();
                     int total = urlConn.getContentLength();//获取文件长度
                     aev.onPosition(-1, total);
-                    String filename = context.getCacheDir().getPath() + "/temp.apk"; //手机存储地址
                     OutputStream os = new FileOutputStream(filename);
                     int length;
                     int lengtsh = 0;

@@ -17,7 +17,9 @@
         android:layout_height="match_parent"
         android:background="@color/qmui_config_color_white"
         android:fitsSystemWindows="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp">
 
         <clurc.net.longerir.view.SegmentedRadioGroup
             android:id="@+id/segment_text"
@@ -65,8 +67,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/str_filter"
-            android:singleLine="true"
-            android:inputType="text" />
+            android:inputType="text"
+            android:singleLine="true" />
+
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">

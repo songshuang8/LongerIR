@@ -46,7 +46,7 @@ public class ViewDragGrid extends ViewGroup implements View.OnTouchListener, Vie
     private boolean changed;
     private int touchmoved=-1;
     private int selected = -1;
-    private boolean aline = false;
+    private boolean aline = false; //每行是否自动分配
 
     public ViewDragGrid(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -411,9 +411,17 @@ public class ViewDragGrid extends ViewGroup implements View.OnTouchListener, Vie
             return new Point(paddingH + (childSize + paddingH) * col,
                     paddingH + (childSize + paddingH) * row - scroll);
         }else {
-            int arowCnt = get_ARowCnt(row);
+            int arowCnt = 0;
+            int rowindex = 0;
+            for (int i = 0; i < getChildCount(); i++) {
+                RemoteBtnView v = getChileByIndex(i);
+                if(v.getRow()==row){
+                    arowCnt++;
+                    if(v.getCol()<col)rowindex++;
+                }
+            }
             paddingW = (view_width - (childSize * arowCnt)) / (arowCnt + 1);
-            return new Point(paddingW + (childSize + paddingW) * col,
+            return new Point(paddingW + (childSize + paddingW) * rowindex,
                     paddingH + (childSize + paddingH) * row - scroll);
         }
     }

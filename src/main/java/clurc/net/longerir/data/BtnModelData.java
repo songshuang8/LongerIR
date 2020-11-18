@@ -7,18 +7,19 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import clurc.net.longerir.Utils.MoudelFile;
 import clurc.net.longerir.data.modeldata.DataModelBtnInfo;
 import clurc.net.longerir.data.modeldata.DataModelInfo;
 import clurc.net.longerir.view.RemoteBtnView;
 
 public class BtnModelData {
     public static String mymodelfile = "/model.db";
-    public static String mymodelfilebak = "/modelsys.db";
 
     private static void CreatemyTable(SQLiteDatabase mSQLiteDatabase){
         String sql= "create table if not exists mymodel(id integer PRIMARY KEY AUTOINCREMENT,strdesc text,colcnt int,issys int)";
@@ -27,13 +28,9 @@ public class BtnModelData {
         mSQLiteDatabase.execSQL(sql);
     }
 
-    public static List<DataModelInfo> readMyModels(Context context,boolean sys){
+    public static List<DataModelInfo> readMyModels(Context context){
         List<DataModelInfo> ret=new ArrayList<DataModelInfo>();
-        String basefile;
-        if(sys)
-            basefile=context.getFilesDir().getAbsolutePath()+mymodelfilebak;
-        else
-            basefile=context.getFilesDir().getAbsolutePath()+mymodelfile;
+        String basefile=context.getFilesDir().getAbsolutePath()+mymodelfile;
         SQLiteDatabase mSQLiteDatabase = SQLiteDatabase.openOrCreateDatabase(basefile,null);
         CreatemyTable(mSQLiteDatabase);
         Cursor cursor =mSQLiteDatabase.rawQuery("select * from mymodel", null);
@@ -54,13 +51,9 @@ public class BtnModelData {
         return ret;
     }
 
-    public static DataModelInfo readAMyModel(Context context,int id,boolean sys){
+    public static DataModelInfo readAMyModel(Context context,int id){
         DataModelInfo ret=new DataModelInfo();
-        String basefile;
-        if(sys)
-            basefile=context.getFilesDir().getAbsolutePath()+mymodelfilebak;
-        else
-            basefile=context.getFilesDir().getAbsolutePath()+mymodelfile;
+        String  basefile=context.getFilesDir().getAbsolutePath()+mymodelfile;
         SQLiteDatabase mSQLiteDatabase = SQLiteDatabase.openOrCreateDatabase(basefile,null);
         CreatemyTable(mSQLiteDatabase);
         Cursor cursor =mSQLiteDatabase.rawQuery("select * from mymodel where id="+id, null);
@@ -79,7 +72,7 @@ public class BtnModelData {
         return ret;
     }
 
-    public static List<DataModelBtnInfo> getBtnInfo(Context context, int id,boolean sys){
+    public static List<DataModelBtnInfo> getBtnInfo(Context context, int id){
         List<DataModelBtnInfo> ret = new ArrayList<DataModelBtnInfo>();
         String basefile=context.getFilesDir().getAbsolutePath()+mymodelfile;
         SQLiteDatabase mSQLiteDatabase = SQLiteDatabase.openOrCreateDatabase(basefile,null);
@@ -101,6 +94,18 @@ public class BtnModelData {
             cursor.close();
         }
         mSQLiteDatabase.close();
+        return ret;
+    }
+
+    public static  int getMaxCols(List<DataModelBtnInfo> btns){
+        int ret = 0;
+        for (int i = 0; i < btns.size(); i++) {
+            DataModelBtnInfo v = btns.get(i);
+            if(v.cols>ret){
+                ret = v.cols;
+            }
+        }
+        ret++;
         return ret;
     }
 
@@ -178,6 +183,56 @@ public class BtnModelData {
         mSQLiteDatabase.close();
         //-------
         return true;
+    }
+    // 从下载的mod文件抽取保存到用户模板里面
+    public  static  void SaveMdFromMoudel(Context context){
+        if(CfgData.modellist==null){
+            return;
+        }
+
+        String basefile=context.getFilesDir().getAbsolutePath()+mymodelfile;
+        SQLiteDatabase mSQLiteDatabase = SQLiteDatabase.openOrCreateDatabase(basefile,null);
+        CreatemyTable(mSQLiteDatabase);
+        Cursor cursor =mSQLiteDatabase.rawQuery("select * from mymodel", null);
+        if(cursor!=null) {
+            if (cursor.getCount() > 0) {
+                cursor.close();
+                mSQLiteDatabase.close();
+                return;
+            }else
+                cursor.close();
+        }
+
+        for (int i = 0; i < CfgData.modellist.size(); i++) {
+            MoudelFile.ModelStru title = CfgData.modellist.get(i);
+            if(title.chip == MoudelFile.Con_Ac_Chip)continue; //去除空调
+            //不要shift
+            List<DataModelBtnInfo> MBtns = MoudelFile.GetMBtns(context,i,false);
+            int colcnt = getMaxCols(MBtns);
+            if(colcnt<2)colcnt= 3; //数据会有错误
+            xiuzhengButtons(MBtns,colcnt);
+//
+            ContentValues values = new ContentValues();
+            values.put("strdesc", title.name);
+            values.put("colcnt", colcnt);
+            int id = (int)mSQLiteDatabase.insert("mymodel", null, values);
+            if(id<0)continue;
+            //---------save info database----
+            //mSQLiteDatabase.execSQL("delete from modelbtnlist where pid="+amodel.id);
+            for (int j = 0; j < MBtns.size(); j++) {
+                DataModelBtnInfo abtn = (DataModelBtnInfo)MBtns.get(j);
+                values = new ContentValues();
+                values.put("pid", id);
+                values.put("btnname", abtn.btnname);
+                values.put("keyidx", abtn.keyidx);
+                values.put("sid", abtn.sid);
+                values.put("rows", abtn.rows);
+                values.put("cols", abtn.cols);
+                values.put("kinds", abtn.kinds);
+                mSQLiteDatabase.insert("modelbtnlist", null, values);
+            }
+        }
+        mSQLiteDatabase.close();
     }
 
     public static void DelAMyModel(Context context,int id){

@@ -3,10 +3,13 @@ package clurc.net.longerir;
 import android.app.Application;
 import android.util.Log;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import clurc.net.longerir.Utils.MoudelFile;
+import clurc.net.longerir.data.BtnModelData;
 import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.IrButton;
 import clurc.net.longerir.ircommu.DesRemote;
@@ -26,14 +29,12 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Log.w(TAG_SS,"===>BaseApplication Creating.....");
+        Fresco.initialize(this);
         instance = this;
         sysremote_brands = new ArrayList<String>();
         shrremote_brands = new ArrayList<String>();
         prcinfo = new DesRemote();
 
-        if(CfgData.modellist==null){
-            CfgData.modellist = MoudelFile.getMoudleArr(instance);
-        }
         QDSkinManager.install(this);
     }
 

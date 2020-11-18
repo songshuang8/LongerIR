@@ -34,20 +34,19 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center">
+                android:layout_height="46dp">
 
                 <ImageView
                     android:id="@+id/btncircle"
                     android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@mipmap/circle" />
 
                 <ImageView
                     android:id="@+id/btnrect"
                     android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@mipmap/rect" />
 
@@ -61,6 +60,7 @@
                     android:layout_height="match_parent"
                     android:clickable="true"
                     android:focusableInTouchMode="false"
+                    android:gravity="center_vertical"
                     android:onClick="ToClickName"
                     android:text="@string/str_btnname"
                     android:textStyle="bold" />
@@ -71,6 +71,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="2dp"
                     android:clickable="true"
+                    android:gravity="center_vertical"
                     android:onClick="ToClickName" />
 
                 <View
@@ -84,6 +85,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="4dp"
                     android:focusableInTouchMode="false"
+                    android:gravity="center_vertical"
                     android:onClick="ToClickIdx"
                     android:text="@string/str_keyidx"
                     android:textStyle="bold" />
@@ -93,30 +95,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="2dp"
+                    android:gravity="center_vertical"
                     android:onClick="ToClickIdx" />
-
-                <View
-                    android:id="@+id/split1"
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/bar_divider" />
-
-                <TextView
-                    android:id="@+id/siddesc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="4dp"
-                    android:focusableInTouchMode="false"
-                    android:onClick="ToClickNo"
-                    android:text="@string/str_sno"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/btnsno"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="2dp"
-                    android:onClick="ToClickNo" />
 
                 <View
                     android:id="@+id/split2"
@@ -127,9 +107,10 @@
                 <ImageView
                     android:id="@+id/btndelete"
                     android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:drawable/ic_delete" />
+
                 <View
                     android:id="@+id/split3"
                     android:layout_width="1dp"
@@ -139,7 +120,7 @@
                 <ImageView
                     android:id="@+id/btnappend"
                     android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:drawable/ic_input_add" />
             </LinearLayout>

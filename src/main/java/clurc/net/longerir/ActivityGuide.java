@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+
 import clurc.net.longerir.bgabanner.BGABanner;
 import clurc.net.longerir.bgabanner.BGALocalImageSize;
 

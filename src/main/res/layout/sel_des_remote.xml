@@ -45,15 +45,14 @@
                 app:srcCompat="@mipmap/fourcol"  />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/remotepic1"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/remotepic2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/remotepic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

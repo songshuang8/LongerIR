@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -351,6 +352,20 @@ public class CfgData {
         }
         return result;
     }
+    public static String getStringFromFile(String filePath) {
+        String result = "";
+        try {
+            InputStream in = new FileInputStream(filePath);
+            int lenght = in.available();
+            byte[] buffer = new byte[lenght];
+            in.read(buffer);
+            result = new String(buffer,"UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     /**
      * 按键信息数据集
      * MBI=ModelButtonInfo
@@ -566,87 +581,7 @@ public class CfgData {
             }
         }
     }
-
-    public static DesRemote GetDesRemoteById(Context context, int rmtid){
-        DesRemote remote = new DesRemote();
-        String remotejson = getStringFromAssets("prclist.txt",context);
-        try {
-            JSONArray jsonArray = new JSONArray(remotejson);
-            for(int i=0;i<jsonArray.length();i++) {
-                JSONObject aitem = (JSONObject) jsonArray.get(i);
-                String idstr = aitem.getString("ModelID");
-                int aid = Integer.parseInt(idstr,16);
-                if(aid!=rmtid)continue;
-
-                remote.name = aitem.getString("ModelType");
-                if(aitem.getInt("HasShift")==1)
-                    remote.hasshit = true;
-                else
-                    remote.hasshit = false;
-                remote.remoreid = aid;
-                JSONArray pagearr = new JSONArray(aitem.getString("PageName"));
-                remote.pagename = new String[pagearr.length()];
-                for (int j = 0; j < pagearr.length(); j++) {
-                    remote.pagename[j] = (String)pagearr.get(j);
-                }
-                JSONArray keyarr = new JSONArray(aitem.getString("btnInfo"));
-                for (int j = 0; j < keyarr.length(); j++) {
-                    JSONObject sitem = (JSONObject) keyarr.get(j);
-                    DesRemoteBtn btn = new DesRemoteBtn();
-                    btn.name = sitem.getString("Name");
-                    btn.s = sitem.getInt("KNo");
-                    btn.keyidx = sitem.getInt("KeyIdx");
-                    btn.follow = sitem.getInt("Folow");
-                    remote.btns.add(btn);
-                }
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return remote;
-    }
-
-    public static List<DesRemote>  GetDesRemoteById(Context context){
-        List<DesRemote> rmts = new ArrayList<DesRemote>();
-        String remotejson = getStringFromAssets("prclist.txt",context);
-        try {
-            JSONArray jsonArray = new JSONArray(remotejson);
-            for(int i=0;i<jsonArray.length();i++) {
-                JSONObject aitem = (JSONObject) jsonArray.get(i);
-                String idstr = aitem.getString("ModelID");
-                int aid = Integer.parseInt(idstr,16);
-
-                DesRemote remote = new DesRemote();
-                remote.name = aitem.getString("ModelType");
-                if(aitem.getInt("HasShift")==1)
-                    remote.hasshit = true;
-                else
-                    remote.hasshit = false;
-                remote.remoreid = aid;
-                JSONArray pagearr = new JSONArray(aitem.getString("PageName"));
-                remote.pagename = new String[pagearr.length()];
-                for (int j = 0; j < pagearr.length(); j++) {
-                    remote.pagename[j] = (String)pagearr.get(j);
-                }
-                JSONArray keyarr = new JSONArray(aitem.getString("btnInfo"));
-                for (int j = 0; j < keyarr.length(); j++) {
-                    JSONObject sitem = (JSONObject) keyarr.get(j);
-                    DesRemoteBtn btn = new DesRemoteBtn();
-                    btn.name = sitem.getString("Name");
-                    btn.s = sitem.getInt("KNo");
-                    btn.keyidx = sitem.getInt("KeyIdx");
-                    btn.follow = sitem.getInt("Folow");
-                    remote.btns.add(btn);
-                }
-                rmts.add(remote);
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return rmts;
-    }
-
-    /**
+      /**
      * 从Assets中读取图片
      * @return
      */

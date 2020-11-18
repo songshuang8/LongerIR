@@ -111,7 +111,7 @@ public class ActivityModelList extends BaseActivity {
 
 
     private void updateData(){
-        models = BtnModelData.readMyModels(instance,false);
+        models = BtnModelData.readMyModels(instance);
 
         if(canselect){
             DataModelInfo ainfo = new DataModelInfo();
@@ -122,7 +122,7 @@ public class ActivityModelList extends BaseActivity {
         for (int i = 0; i < models.size(); i++) {
             DataModelInfo amodel = (DataModelInfo)models.get(i);
             if(amodel.id>0)
-                amodel.btns = BtnModelData.getBtnInfo(instance,amodel.id,false);
+                amodel.btns = BtnModelData.getBtnInfo(instance,amodel.id);
         }
         collist.setLayoutManager(new GridLayoutManager(instance,3));
         modeladapt = new ModelListAdapt(models, instance, new ModelListAdapt.OnItemClickListener() {
@@ -203,7 +203,7 @@ public class ActivityModelList extends BaseActivity {
                                             DataModelInfo amodel = new DataModelInfo();
                                             amodel.strdesc = text.toString();
                                             amodel.colcnt = models.get(selected).colcnt;
-                                            amodel.btns = BtnModelData.getBtnInfo(instance,models.get(selected).id,false);
+                                            amodel.btns = BtnModelData.getBtnInfo(instance,models.get(selected).id);
                                             BtnModelData.SaveLearMyFile(instance,amodel);
                                             updateData();
                                             modeladapt.notifyDataSetChanged();

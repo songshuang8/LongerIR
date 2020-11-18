@@ -104,7 +104,8 @@ public class Search_Brand extends BaseActivity {
         medit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(instance, SearchHis.class),101);
+                if(medit.getText().toString()==null || medit.getText().toString().length()==0)
+                    startActivityForResult(new Intent(instance, SearchHis.class),101);
             }
         });
         // 设置右侧触摸监听

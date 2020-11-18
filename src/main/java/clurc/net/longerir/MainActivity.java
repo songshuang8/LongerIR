@@ -91,11 +91,10 @@ public class MainActivity extends AppCompatActivity {
         }
         // data
         SsSerivce.getInstance().Start(this);
+        //7980的模板
         CfgData.readSystBtnInfo(this);
         //
         FileInitCheck();
-        //
-        ModelFileCHeck();
         //
         CfgData.OpenConfig(this);
         mCircleProgressBar = findViewById(R.id.circleProgressBar);
@@ -327,7 +326,8 @@ public class MainActivity extends AppCompatActivity {
         });
         mCircleProgressBar.setVisibility(View.VISIBLE);
         mCircleProgressBar.setProgress(0,false);
-        webHttpClientCom.getInstance(this).BackHttpGetFile(url, new webHttpClientCom.OnDownEventer() {
+        String filename = getCacheDir().getPath() + "/temp.apk"; //手机存储地址
+        webHttpClientCom.getInstance(this).BackHttpGetFile(url, filename,new webHttpClientCom.OnDownEventer() {
             @Override
             public void onSuc(final String file) {
                 Log.w(TAG_SS,"===>do install file "+file);
@@ -398,9 +398,6 @@ public class MainActivity extends AppCompatActivity {
     public native static int irGetCurrentFreq();
 
     private void FileInitCheck(){
-        if(!copyAssetFileToFiles("modelsys.db")){
-            Log.v("sungle","copy file err");
-        }
         if(!copyAssetFileToFiles("irapp.db")){
             Log.v("sungle","copy file err");
             return;
@@ -465,11 +462,5 @@ public class MainActivity extends AppCompatActivity {
             Log.e("DB_ERROR", "数据文件读写失败");
         }
         return  true;
-    }
-
-    private void ModelFileCHeck(){
-        String src=  getFilesDir().getAbsolutePath()+ BtnModelData.mymodelfilebak;
-        String des=  getFilesDir().getAbsolutePath()+ BtnModelData.mymodelfile;
-        copyFileToFiles(src,des);
     }
 }

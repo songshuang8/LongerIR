@@ -36,7 +36,7 @@ public class UniversalCode extends BaseActivity {
     public void DoInit() {
         desidx = getIntent().getExtras().getInt("desidx");
         ((TextView)findViewById(R.id.tvdes)).setText(CfgData.modellist.get(desidx).name);
-        pages = MoudelFile.getMoudlePage(instance,desidx,CfgData.modellist);
+        pages = CfgData.modellist.get(desidx).pageName;
         pageui = new PageInfoUI[4];
         for (int i = 0; i < 4; i++) {
             pageui[i] = new PageInfoUI();

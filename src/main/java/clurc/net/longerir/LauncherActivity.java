@@ -6,22 +6,40 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import clurc.net.longerir.Utils.MoudelFile;
+import clurc.net.longerir.data.BtnModelData;
+import clurc.net.longerir.data.CfgData;
+import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.manager.QDPreferenceManager;
+
+import static clurc.net.longerir.data.webHttpClientCom.baseurl;
+import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
 
 public class LauncherActivity extends Activity {
     private Handler waitHandler=null;
     private Runnable waitRunnable=null;
     private  boolean bwaitingRight = false;
+    private  boolean bdownModel = false;
     private  boolean bcanexit = false;
 
     @Override
@@ -35,10 +53,11 @@ public class LauncherActivity extends Activity {
         setContentView(R.layout.activity_launcher);
         waitHandler=new Handler();
         RequestMyPermission();
+        getModelData();
         waitRunnable=new Runnable() {
             @Override
             public void run() {
-                if(bwaitingRight) {
+                if(bwaitingRight || bdownModel) {
                     if(bcanexit==false)
                         waitHandler.postDelayed(waitRunnable, 2000);
                 }else{
@@ -47,7 +66,42 @@ public class LauncherActivity extends Activity {
                 }
             }
         };
-        waitHandler.postDelayed(waitRunnable, 2000);
+        waitHandler.postDelayed(waitRunnable, 1000);
+    }
+
+    private void getModelData(){
+        String filename = MoudelFile.getModeFile(this); //手机存储地址
+        webHttpClientCom.getInstance(this).BackHttpGetFile(baseurl+"mod_export?flag=0", filename,new webHttpClientCom.OnDownEventer() {
+            @Override
+            public void onSuc(final String file) {
+                Log.w(TAG_SS,"===>get model file ok ");
+                CfgData.modellist = MoudelFile.getMoudleArr(LauncherActivity.this);
+                // 从下载的mod文件抽取保存到用户模板里面
+                BtnModelData.SaveMdFromMoudel(LauncherActivity.this);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        bdownModel = false;
+                    }
+                });
+            }
+
+            @Override
+            public void onFail(final String res) {
+                CfgData.modellist = MoudelFile.getMoudleArr(LauncherActivity.this);
+                Log.w(TAG_SS,"===>get model file err");
+                // 从下载的mod文件抽取保存到用户模板里面
+                BtnModelData.SaveMdFromMoudel(LauncherActivity.this);
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        bdownModel = false;
+                    }
+                });
+            }
+
+            @Override
+            public void onPosition(final int curr,final int total) {
+            }
+        });
     }
 
     String[] permissions = new String[]{

@@ -53,14 +53,14 @@
                 android:layout_below="@id/pnl_search"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp">
+                android:layout_marginRight="8dp"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tvdev"
                     style="@style/Base.TextAppearance.AppCompat.Body1"
-                    android:layout_width="0dp"
+                    android:layout_width="32dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:text="@string/str_dev"
                     android:textAppearance="?android:attr/textAppearanceListItemSmall"

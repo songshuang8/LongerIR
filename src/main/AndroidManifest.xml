@@ -203,13 +203,6 @@
         </activity>
 
         <activity
-            android:name=".activity.SelectPages"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
-        </activity>
-
-        <activity
             android:name=".activity.SelectIrPort"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"

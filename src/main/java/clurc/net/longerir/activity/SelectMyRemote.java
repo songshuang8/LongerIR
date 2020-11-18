@@ -39,18 +39,7 @@ public class SelectMyRemote extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 myidx = myid[i];
-                String[] pages = MoudelFile.getMoudlePage(instance, desidx, CfgData.modellist);
-                if(pagesel<0 && pages.length<2) {
-                    pagesel = 0;
-                }
-                if(pagesel>=0){
-                    dofinnishThis();
-                    return;
-                }
-                Intent intent = new Intent();
-                intent.setClass(instance, SelectPages.class);
-                intent.putExtra("pages", pages);
-                instance.startActivityForResult(intent, 1);
+                dofinnishThis();
             }
         });
     }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +22,19 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import android.net.Uri;
+
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.drawable.ProgressBarDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +42,12 @@ import clurc.net.longerir.R;
 import clurc.net.longerir.Utils.MoudelFile;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
+import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.manager.QDPreferenceManager;
 
 public class SelectDesRemote extends BaseActivity {
     public static List<Integer> showidx;
-    public static List<String> showname;
+    public static List<MoudelFile.ModelStru> showcurr;
 
     private  int selecttype;
     private int selectindex;
@@ -39,10 +55,10 @@ public class SelectDesRemote extends BaseActivity {
     private QDRecyclerViewAdapter mRecyclerViewAdapter;
     private SnapHelper mSnapHelper;
 
-    private RecyclerView mRecyclerView1,mRecyclerView2;
+    private RecyclerView mRecyclerView;
 
-    private Rv2Adapter rv2;
     private LinearLayout llshowtype;
+    private boolean showtype;
     @Override
     public void getViewId() {
         layid = R.layout.sel_des_remote;
@@ -56,7 +72,7 @@ public class SelectDesRemote extends BaseActivity {
             CfgData.modellist = MoudelFile.getMoudleArr(instance);
         }
         showidx = new ArrayList<Integer>();//当前过滤的
-        showname = new ArrayList<String>();
+        showcurr = new ArrayList<MoudelFile.ModelStru>();
         selecttype = getIntent().getIntExtra("iseltype",-1);
         for (int i = 0; i < CfgData.modellist.size(); i++) {
             if(CfgData.modellist.get(i).prgtype!=0)continue;
@@ -76,7 +92,7 @@ public class SelectDesRemote extends BaseActivity {
                 }
             }
             showidx.add(i);
-            showname.add(CfgData.modellist.get(i).name);
+            showcurr.add(CfgData.modellist.get(i));
         }
         mTopBar.addRightImageButton(R.mipmap.icon_topbar_overflow, R.id.topbar_right_change_button)
                 .setOnClickListener(new View.OnClickListener() {
@@ -86,18 +102,14 @@ public class SelectDesRemote extends BaseActivity {
                     }
                 });
         //------------------------
-        mRecyclerView2 = findViewById(R.id.remotepic2);
-        mRecyclerView2.setLayoutManager(new GridLayoutManager(instance,4));
-        rv2 = new Rv2Adapter();
-        mRecyclerView2.setAdapter(rv2);
+        mRecyclerView = findViewById(R.id.remotepic);
         //------------------------------------
-        mRecyclerView1 = findViewById(R.id.remotepic1);
-        mRecyclerView1.setLayoutManager(new LinearLayoutManager(instance, LinearLayoutManager.HORIZONTAL, false));
-        mRecyclerViewAdapter = new QDRecyclerViewAdapter();
-        mRecyclerView1.setAdapter(mRecyclerViewAdapter);
-        mSnapHelper = new PagerSnapHelper();
-        mSnapHelper.attachToRecyclerView(mRecyclerView1);
+        showtype = QDPreferenceManager.getInstance(instance).getShowType();
         changeTypeShow();
+        mRecyclerViewAdapter = new QDRecyclerViewAdapter();
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        mSnapHelper = new PagerSnapHelper();
+        mSnapHelper.attachToRecyclerView(mRecyclerView);
     }
 
     @Override
@@ -106,19 +118,31 @@ public class SelectDesRemote extends BaseActivity {
                 Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
                 -1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
         mShowAction.setDuration(500);
+        mShowAction.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mRecyclerViewAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         llshowtype.startAnimation(mShowAction);
         llshowtype.setVisibility(View.VISIBLE);
     }
 
     private void changeTypeShow(){
-        if(QDPreferenceManager.getInstance(instance).getShowType()) {
-            mRecyclerView1.setVisibility(View.GONE);
-            mRecyclerView2.setVisibility(View.VISIBLE);
-            //rv2.notifyDataSetChanged();
+        if(showtype) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(instance,4));
         }else{
-            mRecyclerView2.setVisibility(View.GONE);
-            mRecyclerView1.setVisibility(View.VISIBLE);
-            //mRecyclerViewAdapter.notifyDataSetChanged();
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(instance, LinearLayoutManager.HORIZONTAL, false));
         }
     }
 
@@ -128,54 +152,6 @@ public class SelectDesRemote extends BaseActivity {
         at.putExtra("desidx", selectindex);
         setResult(Activity.RESULT_OK, at);
         finish();
-    }
-
-    class Rv2Adapter extends RecyclerView.Adapter<Rv2Adapter.VH> {
-        @Override
-        public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.mall_classic_view2, parent, false);
-            return new VH(v);
-        }
-        // 创建ViewHolder
-        class VH extends RecyclerView.ViewHolder{
-            public TextView mtitle;
-            public ImageView image;
-            public VH(View v) {
-                super(v);
-                mtitle = v.findViewById(R.id.tvTitle);
-                image = v.findViewById(R.id.iv_photo);
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return showname.size();
-        }
-
-        @Override
-        public void onBindViewHolder(final VH holder, int position) {
-            holder.setIsRecyclable(false);
-            if(showname.size()==0 || position>=showname.size())return;
-            if(holder.mtitle.getText().toString()!=null && holder.mtitle.getText().toString().length()>0)return;
-            String astr = showname.get(position);
-            holder.mtitle.setText(astr);
-            holder.image.setImageBitmap(createBitmapFromByteData(showidx.get(position)));
-            holder.image.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos = holder.getLayoutPosition();
-                    doselClick(showidx.get(pos));
-                }
-            });
-        }
-    }
-    private Bitmap createBitmapFromByteData(int idx){
-        byte[] data = MoudelFile.getMoudleJpg(instance,idx,CfgData.modellist);
-        BitmapFactory.Options op = new BitmapFactory.Options();
-        op.inSampleSize = 2;
-        //op.inJustDecodeBounds = true; //它仅仅会把它的宽，高取回来给你，这样就不会占用太多的内存，也就不会那么频繁的发生OOM了。
-        //op.inPreferredConfig = Bitmap.Config.ARGB_4444;    // 默认是Bitmap.Config.ARGB_8888
-        return BitmapFactory.decodeByteArray(data, 0, data.length, op);
     }
 
     private void dofinnishThis(int myidx,int pageidx){
@@ -200,37 +176,79 @@ public class SelectDesRemote extends BaseActivity {
                 Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
                 -1.0f);
         mHiddenAction.setDuration(500);
+        mHiddenAction.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mRecyclerViewAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         llshowtype.startAnimation(mHiddenAction);
         llshowtype.setVisibility(View.GONE);
     }
 
     public void showSingle(View v){
         QDPreferenceManager.getInstance(instance).setShowType(false);
+        showtype = false;
         changeTypeShow();
         hideshowType();
     }
 
     public void showFour(View v){
         QDPreferenceManager.getInstance(instance).setShowType(true);
+        showtype = true;
         changeTypeShow();
         hideshowType();
     }
 
-    class QDRecyclerViewAdapter extends RecyclerView.Adapter<QDRecyclerViewAdapter.ViewHolder> {
+    class QDRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //        private AdapterView.OnItemClickListener mOnItemClickListener;
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-            View root = inflater.inflate(R.layout.sel_des_remote_a, viewGroup, false);
-            return new ViewHolder(root,QDRecyclerViewAdapter.this);
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            if(i==0) {
+                View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sel_des_remote_a, viewGroup, false);
+                return new ViewHolder1(v, QDRecyclerViewAdapter.this);
+            }else{
+                View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.mall_classic_view2, viewGroup, false);
+                return new ViewHolder4(v,QDRecyclerViewAdapter.this);
+            }
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            viewHolder.setIsRecyclable(false);
-            int idx = showidx.get(position);
-            viewHolder.mTextView.setText(CfgData.modellist.get(idx).name);
-            viewHolder.mImageView.setImageBitmap(createBitmapFromByteData(idx));
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            holder.setIsRecyclable(false);
+            MoudelFile.ModelStru astu = showcurr.get(position);
+            if (holder instanceof ViewHolder1) {
+                ((ViewHolder1)holder).mTextView.setText(astu.name);
+                setLoadPicInfo(((ViewHolder1)holder).mImageView,
+                        webHttpClientCom.baseurl + "mod_export?flag=1&rmtid=" + astu.id + "&cnt=" + astu.imageCount);
+            }else{
+                ((ViewHolder4)holder).mTextView.setText(astu.name);
+                setLoadPicInfo(((ViewHolder4)holder).mImageView,
+                        webHttpClientCom.baseurl + "mod_export?flag=1&rmtid=" + astu.id + "&cnt=" + astu.imageCount);
+            }
+        }
+
+        /**
+         * 决定元素的布局使用哪种类型
+         *
+         * @param position 数据源的下标
+         * @return 一个int型标志，传递给onCreateViewHolder的第二个参数 */
+        @Override
+        public int getItemViewType(int position) {
+            if(showtype)
+                return 1;
+            else
+                return 0;
         }
 
         @Override
@@ -243,17 +261,17 @@ public class SelectDesRemote extends BaseActivity {
             doselClick(showidx.get(position));
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public class ViewHolder1 extends RecyclerView.ViewHolder implements View.OnClickListener {
             private TextView mTextView;
-            private ImageView mImageView;
+            private SimpleDraweeView mImageView;
             private QDRecyclerViewAdapter mAdapter;
 
-            public ViewHolder(View itemView,QDRecyclerViewAdapter adapter) {
+            public ViewHolder1(View itemView,QDRecyclerViewAdapter adapter) {
                 super(itemView);
                 itemView.setOnClickListener(this);
                 mAdapter = adapter;
-                mTextView = (TextView) itemView.findViewById(R.id.rdes);
-                mImageView = (ImageView) itemView.findViewById(R.id.apic);
+                mTextView = itemView.findViewById(R.id.rdes);
+                mImageView = itemView.findViewById(R.id.apic);
             }
 
             @Override
@@ -261,5 +279,46 @@ public class SelectDesRemote extends BaseActivity {
                 mAdapter.onItemHolderClick(this);
             }
         }
+        public class ViewHolder4 extends RecyclerView.ViewHolder implements View.OnClickListener {
+            private TextView mTextView;
+            private SimpleDraweeView mImageView;
+            private QDRecyclerViewAdapter mAdapter;
+
+            public ViewHolder4(View itemView,QDRecyclerViewAdapter adapter) {
+                super(itemView);
+                itemView.setOnClickListener(this);
+                mAdapter = adapter;
+                mTextView = itemView.findViewById(R.id.tvTitle);
+                mImageView = itemView.findViewById(R.id.my_image_view);
+            }
+
+            @Override
+            public void onClick(View v) {
+                mAdapter.onItemHolderClick(this);
+            }
+        }
+    }
+
+    private void setLoadPicInfo(SimpleDraweeView imageview,String url){
+        Uri uri = Uri.parse(url);
+        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
+                .setProgressiveRenderingEnabled(true)
+//                .disableDiskCache()
+                .build();
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setImageRequest(request)
+                .setOldController(imageview.getController())
+                .build();
+        GenericDraweeHierarchyBuilder builder =
+                new GenericDraweeHierarchyBuilder(getResources());
+        GenericDraweeHierarchy hierarchy = builder
+                .setFadeDuration(300)
+                .setPlaceholderImage(R.drawable.placeholder)
+                .setPlaceholderImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                .setProgressBarImage(new ProgressBarDrawable())
+                .build();
+        imageview.setHierarchy(hierarchy);
+        imageview.setController(controller);
     }
 }

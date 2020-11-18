@@ -35,11 +35,10 @@ public class ActivityModelEdit extends BaseActivity {
     private ViewDragGrid dragGridview;
     private LinearLayout pnlEdtor;
     private ImageView btnCircle,btnRect,btnDelete,btnAdd;
-    private TextView vname,vkeyidx,vsno;
+    private TextView vname,vkeyidx;
 
     private RemoteBtnView mselectbtn = null;
     private DataModelInfo amodel;
-    private boolean isprofessional=false;
 
     @Override
     public void getViewId() {
@@ -48,7 +47,6 @@ public class ActivityModelEdit extends BaseActivity {
 
         amodel = new DataModelInfo();
         amodel.id = getIntent().getExtras().getInt("id",-1);
-        isprofessional = getIntent().getExtras().getBoolean("pro",true);
         if(amodel.id<0) {
             amodel.colcnt = getIntent().getExtras().getInt("colcnt", -1);
             int rows = getIntent().getExtras().getInt("rowcnt", -1);
@@ -67,8 +65,8 @@ public class ActivityModelEdit extends BaseActivity {
                 amodel.btns.add(abtn);
             }
         }else {
-            amodel = BtnModelData.readAMyModel(instance, amodel.id,false);
-            amodel.btns = BtnModelData.getBtnInfo(instance,amodel.id,false);
+            amodel = BtnModelData.readAMyModel(instance, amodel.id);
+            amodel.btns = BtnModelData.getBtnInfo(instance,amodel.id);
         }
     }
 
@@ -81,7 +79,6 @@ public class ActivityModelEdit extends BaseActivity {
         btnAdd = findViewById(R.id.btnappend);
         vname = findViewById(R.id.btnname);
         vkeyidx = findViewById(R.id.btnkeyidx);
-        vsno = findViewById(R.id.btnsno);
 
         dragGridview = findViewById(R.id.vgv);
 
@@ -212,20 +209,11 @@ public class ActivityModelEdit extends BaseActivity {
             }
         });
         if(mselectbtn==null)pnlEdtor.setVisibility(View.GONE);
-        if(!isprofessional){
-            vkeyidx.setVisibility(View.GONE);
-            vsno.setVisibility(View.GONE);
-            findViewById(R.id.split1).setVisibility(View.GONE);
-            findViewById(R.id.split2).setVisibility(View.GONE);
-            findViewById(R.id.keyidxdesc).setVisibility(View.GONE);
-            findViewById(R.id.siddesc).setVisibility(View.GONE);
-        }
     }
 
     private void dataToUI(){
         vname.setText(mselectbtn.getBtnName());
         vkeyidx.setText(String.valueOf(mselectbtn.getKeyidx()+1));
-        vsno.setText(String.valueOf(mselectbtn.getSno()));
     }
 
     public void ToClickName(View view){

@@ -5,6 +5,8 @@ public class DesRemoteBtn {
     public int s ;
     public int keyidx;
     public int follow;
+    public boolean isstudy;
+    public int row,col;
 
     public boolean flag;
     public DesRemoteBtn(){

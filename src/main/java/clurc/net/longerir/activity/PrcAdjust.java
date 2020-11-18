@@ -7,10 +7,12 @@ import android.widget.Toast;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import clurc.net.longerir.BaseApplication;
 import clurc.net.longerir.R;
+import clurc.net.longerir.Utils.MoudelFile;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.BtnInfo;
 import clurc.net.longerir.data.BtnModelData;
@@ -19,6 +21,7 @@ import clurc.net.longerir.data.RemoteInfo;
 import clurc.net.longerir.data.modeldata.DataModelBtnInfo;
 import clurc.net.longerir.data.modeldata.DataModelInfo;
 import clurc.net.longerir.ircommu.DesRemote;
+import clurc.net.longerir.ircommu.DesRemoteBtn;
 import clurc.net.longerir.view.RemoteBtnView;
 import clurc.net.longerir.view.ViewDragGridAdjust;
 
@@ -42,63 +45,8 @@ public class PrcAdjust extends BaseActivity {
         pagesel = getIntent().getIntExtra("pagesel", -1);
         DGViewNew = findViewById(R.id.vgv);
 
-        int remoteid = CfgData.modellist.get(desidx).id;
-        int modelid = 3;
-        switch (remoteid){
-            case 0x1A00:
-            case 0x1A01:
-            case 0x1A02:
-                modelid = 3;
-                break;
-            case 0x1A10:
-                modelid = 4;
-                break;
-            case 0x1A32:
-                modelid = 5;
-                break;
-            case 0x1A34:
-            case 0x1A60:
-                modelid = 6;
-                break;
-            case 0x1A71:
-            case 0x1A72:
-                modelid = 7;
-                break;
-            case 0x1A80:
-                modelid = 8;
-                break;
-            case 0x1B07:
-                modelid = 9;
-                break;
-            case 0x7:
-            case 0x8:
-            case 0x5:
-            case 0x1:
-            case 0x2:
-                modelid = 10;
-                break;
-            case 0x9:
-            case 0xA:
-            case 0x6:
-                modelid = 11;
-                break;
-            case 0x1995:
-            case 0x199A:
-            case 0x199B:
-            case 0x1999:
-                modelid = 12;
-                break;
-        }
-        List<DataModelInfo> models = BtnModelData.readMyModels(instance,false);
-        DataModelInfo amodel = null;
-        for (int i = 0; i < models.size(); i++) {
-            if(models.get(i).id == modelid){
-                amodel = models.get(i);
-            }
-        }
-        if(amodel==null)return;
-        amodel.btns = BtnModelData.getBtnInfo(instance,amodel.id,false);
-        DGViewNew.setCOL_CNT(amodel.colcnt);
+        List<DataModelBtnInfo> dmbtns =  MoudelFile.GetMBtns(instance,desidx,true);
+        DGViewNew.setCOL_CNT(BtnModelData.getMaxCols(dmbtns));
 
         for (int j = 0; j < prcinfo.src.size(); j++) {
             if (prcinfo.src.get(j).pageidx == pagesel) {
@@ -107,38 +55,29 @@ public class PrcAdjust extends BaseActivity {
             }
         }
         if(srcremote==null)return;
+        int normalcount = dmbtns.size() / 2 ;
+        MoudelFile.ModelStru mdstr = CfgData.modellist.get(desidx);
         //
-        int size = amodel.btns.size();
-        int alllen = size;
-        int maxrow = 0;
-        if(CfgData.modellist.get(desidx).hasShift) {
-            alllen = size * 2;
-            for(int i=0;i<amodel.btns.size();i++){
-                if(maxrow<amodel.btns.get(i).rows){
-                    maxrow = amodel.btns.get(i).rows;
-                }
-            }
-        }
-        maxrow++;
-        for(int i=0;i<alllen;i++){
-            boolean ishift = (i>=size)?true:false;
-            int idx = i;
-            if(ishift)idx-=size;
-            DataModelBtnInfo dmbtn = amodel.btns.get(idx);            
+        for(int i=0;i<dmbtns.size();i++){
+            DataModelBtnInfo dmbtn = dmbtns.get(i);
             RemoteBtnView image = new RemoteBtnView(instance,
                     getResources().getColor(android.R.color.darker_gray),
                     getResources().getColor(android.R.color.holo_blue_dark),true);
             image.setBtnName(dmbtn.btnname);
-            if(ishift)
-                image.setRownCol(dmbtn.cols,dmbtn.rows+maxrow);
-            else
-                image.setRownCol(dmbtn.cols,dmbtn.rows);
+            image.setRownCol(dmbtn.cols,dmbtn.rows);
             image.setmShapeKinds(RemoteBtnView.ShapeKinds.values()[dmbtn.kinds]);
             image.setKeyidx(dmbtn.keyidx);
             image.setTag(i);
             image.setSno(dmbtn.sid);
             image.setMadjust(true);
-            image.setMshift(ishift);
+            if(CfgData.modellist.get(desidx).hasShift) {
+                if(i>=normalcount){
+                    image.setMshift(true);
+                }else{
+                    image.setMshift(false);
+                }
+            }else
+                image.setMshift(false);
             // look for src info
             BtnInfo srcbtn=null;
             for (int j = 0; j < srcremote.btns.size(); j++) {

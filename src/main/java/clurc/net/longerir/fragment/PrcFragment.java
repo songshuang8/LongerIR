@@ -298,7 +298,7 @@ public class PrcFragment extends BaseFragment {
             case 94: {
                 desidx = data.getIntExtra("desidx",0);
                 tvmodename.setText(CfgData.modellist.get(desidx).name);
-                prcinfo.pagename = MoudelFile.getMoudlePage(context,desidx,CfgData.modellist);
+                prcinfo.pagename = CfgData.modellist.get(desidx).pageName;
                 if(CfgData.myremotelist.size()>0) {
                     setCurrRemoteFromMyd(data.getIntExtra("myidx", 0), data.getIntExtra("pagesel", 0));
                 }
@@ -315,7 +315,7 @@ public class PrcFragment extends BaseFragment {
                 boolean oldisac = isac;
                 isac = CfgData.modellist.get(desidx).chip == 11?true:false;
                 //获取目标遥控器的按键信息
-                prcinfo.btns = MoudelFile.GetBtns(context, desidx, CfgData.modellist);
+                prcinfo.btns = MoudelFile.GetBtns(context, desidx);
                 if (prcinfo.btns.size() == 0) {
                     showMessage("Error", "Err found,cant not found prcinfo remote control's template");
                     return;
@@ -323,7 +323,7 @@ public class PrcFragment extends BaseFragment {
 
                 int typeint = data.getIntExtra("destype", 0);
                 tvmodename.setText(CfgData.getDesTypeDesc(typeint) + " " + CfgData.modellist.get(desidx).name);
-                prcinfo.pagename = MoudelFile.getMoudlePage(context, desidx, CfgData.modellist);
+                prcinfo.pagename =CfgData.modellist.get(desidx).pageName;
 
                 if (oldisac != isac) {  //剔除所有
                     while (prcinfo.src.size()>0) {

@@ -45,9 +45,9 @@ public class IrLearn extends BaseActivity {
         if(pos<0) {
             int selmodelidx = getIntent().getExtras().getInt("selmodelidx",0);
 
-            List<DataModelInfo> models = BtnModelData.readMyModels(instance,false);
+            List<DataModelInfo> models = BtnModelData.readMyModels(instance);
             DataModelInfo amodel = models.get(selmodelidx);
-            amodel.btns = BtnModelData.getBtnInfo(instance,amodel.id,false);
+            amodel.btns = BtnModelData.getBtnInfo(instance,amodel.id);
 
             aremote = new RemoteInfo();
             aremote.islearned = true;
