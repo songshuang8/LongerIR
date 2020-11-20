@@ -100,6 +100,7 @@ public class CfgData {
                     int v = cursor.getInt(cursor.getColumnIndex("islearned"));
                     ainfo.islearned = ((v % 2) == 1) ? true : false;
                     ainfo.isAc = (int)(v / 10);
+                    ainfo.fav = cursor.getInt(cursor.getColumnIndex("fav"))==1?true:false;
                     ainfo.acdata = cursor.getString(cursor.getColumnIndex("keys"));
                     ainfo.rid = cursor.getInt(cursor.getColumnIndex("rid"));
                     rmtlist.add(ainfo);
@@ -158,7 +159,7 @@ public class CfgData {
     }
 
     private static void CreatemyTable(SQLiteDatabase mSQLiteDatabase){
-        String sql= "create table if not exists myremote(id integer PRIMARY KEY AUTOINCREMENT,showstr text,pp text,xh text,dev text,keys text,islearned int,rid int,codecannot int)";
+        String sql= "create table if not exists myremote(id integer PRIMARY KEY AUTOINCREMENT,showstr text,pp text,xh text,dev text,keys text,islearned int,rid int,codecannot int,fav int)";
         mSQLiteDatabase.execSQL(sql);
         //增加字段
         sql = "SELECT sql FROM sqlite_master where type='table' and tbl_name='myremote'";
@@ -172,6 +173,9 @@ public class CfgData {
                 }
                 if(!s.contains("codecannot")){
                     mSQLiteDatabase.execSQL("ALTER TABLE 'myremote' ADD 'codecannot' int DEFAULT 0");
+                }
+                if(!s.contains("fav")){
+                    mSQLiteDatabase.execSQL("ALTER TABLE 'myremote' ADD 'fav' int DEFAULT 0");
                 }
             }
         }
@@ -193,6 +197,7 @@ public class CfgData {
         values.put("dev", armt.dev);
         values.put("rid", armt.rid);
         values.put("codecannot", armt.codecannot?1:0);
+        values.put("fav", armt.fav?1:0);
         int v = 0;
         if(armt.islearned)v = 1;
         v+= armt.isAc*10;
@@ -234,6 +239,17 @@ public class CfgData {
         mSQLiteDatabase.close();
         //-------
         return true;
+    }
+
+    public  static void MyRemoteSaveFav(Context context,RemoteInfo armt){
+        String basefile=context.getFilesDir().getAbsolutePath()+myremotefile;
+        SQLiteDatabase mSQLiteDatabase = SQLiteDatabase.openOrCreateDatabase(basefile,null);
+        CreatemyTable(mSQLiteDatabase);
+
+        ContentValues values = new ContentValues();
+        values.put("fav", armt.fav?1:0);
+        mSQLiteDatabase.update("myremote", values,"id=?",new String[]{String.valueOf(armt.id)});
+        mSQLiteDatabase.close();
     }
 
     public static void TransTxtToBtns(List<TxtBtnInfo> src,List<BtnInfo> des,String dev,int isAc){

@@ -48,6 +48,7 @@ android {
         }
         debug {
             signingConfig signingConfigs.debug
+            jniDebuggable true
         }
     }
     compileOptions {

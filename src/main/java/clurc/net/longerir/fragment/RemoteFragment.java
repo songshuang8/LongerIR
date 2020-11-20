@@ -136,8 +136,7 @@ public class RemoteFragment extends BaseFragment {
                                                     @Override
                                                     public void onSuc() { //RemoteInfo aremote = new RemoteInfo();
                                                         Toast.makeText(context, getString(R.string.str_add_ok), Toast.LENGTH_SHORT).show();
-                                                        deviceAdapter.CheckChanged();
-                                                        deviceAdapter.notifyDataSetChanged();
+                                                        deviceAdapter.ChangeInvalid();
                                                     }
                                                 });
                                                 break;
@@ -173,8 +172,7 @@ public class RemoteFragment extends BaseFragment {
             public void onClick(View v) {
                 pnlsearch.setVisibility(View.GONE);
                 filter.setText("");
-                deviceAdapter.setFilterstr("");
-                deviceAdapter.notifyDataSetChanged();
+                deviceAdapter.setIsearch(false);
             }
         });
         filter.addTextChangedListener(new TextWatcher() {
@@ -182,7 +180,6 @@ public class RemoteFragment extends BaseFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(uictrl)return;
                 deviceAdapter.setFilterstr(filter.getText().toString().toUpperCase());
-                deviceAdapter.notifyDataSetChanged();
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -201,8 +198,9 @@ public class RemoteFragment extends BaseFragment {
         //ListView长按监听
         mlist.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
-                if(deviceAdapter.isTitle(position))return false;
-                currindex = deviceAdapter.getIdx(position);
+                DevicesItemAdapter.MyremoteListClass abj = deviceAdapter.getCurrItemObj(position);
+                if(abj.istitle)return false;
+                currindex = abj.idx;
                 QMUIBottomSheet.BottomListSheetBuilder bd = new QMUIBottomSheet.BottomListSheetBuilder(context);
                 bd.addItem(context.getString(R.string.str_delete),"0");
                 if(CfgData.myremotelist.get(currindex).codecannot==false)
@@ -236,8 +234,7 @@ public class RemoteFragment extends BaseFragment {
                                             public void onClick(QMUIDialog dialog, int index) {
                                                 dialog.dismiss();
                                                 CfgData.DeleteMyRemote(context,currindex);
-                                                deviceAdapter.CheckChanged();
-                                                deviceAdapter.notifyDataSetChanged();
+                                                deviceAdapter.ChangeInvalid();
                                                 if(src.rid>0){
                                                     webHttpClientCom.getInstance(null).RestkHttpCallBase("appRemote/"+ src.rid,null,"DELETE",null);
                                                 }
@@ -373,9 +370,13 @@ public class RemoteFragment extends BaseFragment {
         mlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,final int position, long id) {
-                if(deviceAdapter.isTitle(position))return;
+                DevicesItemAdapter.MyremoteListClass abj = deviceAdapter.getCurrItemObj(position);
+                if(abj.istitle){
+                    deviceAdapter.setZhedie(abj.idx);
+                    return;
+                }
                 Intent intent = new Intent();
-                int idx = deviceAdapter.getIdx(position);
+                int idx = abj.idx;
                 if(CfgData.myremotelist.get(idx).isAc==CfgData.AcPro)
                     intent.setClass(context, RemotePlayAc.class);
                 else
@@ -421,11 +422,14 @@ public class RemoteFragment extends BaseFragment {
                 intent.putExtra("desidx",desidx);
                 ((Activity)context).startActivity(intent);
                 break;
-            case 101: //添加遥控器
+            case 101: //搜索框
                 String searchstr = data.getStringExtra("searchstr");
                 if (QMUILangHelper.isNullOrEmpty(searchstr))return;
+                uictrl=true;
                 pnlsearch.setVisibility(View.VISIBLE);
                 filter.setText(searchstr);
+                uictrl = false;
+                deviceAdapter.setFilterstr(searchstr.toUpperCase());
                 break;
         }
     }
@@ -510,7 +514,6 @@ public class RemoteFragment extends BaseFragment {
 
     @Override
     public void DoOnResume(){
-        deviceAdapter.CheckChanged();
-        deviceAdapter.notifyDataSetChanged();
+        deviceAdapter.ChangeInvalid();
     }
 }

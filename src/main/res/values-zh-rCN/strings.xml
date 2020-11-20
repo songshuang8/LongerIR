@@ -209,4 +209,5 @@
     <string name="str_data_American">美洲版</string>
     <string name="str_data_europe">欧洲版</string>
     <string name="str_data_auto">自动</string>
+    <string name="str_favourite">收藏</string>
 </resources>

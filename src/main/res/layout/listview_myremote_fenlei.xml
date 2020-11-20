@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -8,11 +9,14 @@
     android:background="?android:attr/selectableItemBackground"
     android:padding="2dp">
 
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:srcCompat="@mipmap/remote_sl" />
+
     <TextView
-        android:id="@+id/tvdev"
-        android:layout_width="0dp"
+        android:layout_width="8dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:gravity="center_vertical"
         android:minHeight="@dimen/list_ss_item_height"
         android:textAppearance="?android:attr/textAppearanceListItemSmall" />
@@ -35,5 +39,11 @@
         android:gravity="center_vertical"
         android:minHeight="@dimen/list_ss_item_height"
         android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:srcCompat="@mipmap/fav" />
 
 </LinearLayout>
