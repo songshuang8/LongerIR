@@ -29,10 +29,6 @@ import clurc.net.longerir.data.BtnModelData;
 import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.RemoteInfo;
 import clurc.net.longerir.data.modeldata.DataModelInfo;
-import clurc.net.longerir.view.RemoteBtnView;
-import clurc.net.longerir.view.ViewDragGridReadOnly;
-
-import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
 
 //空调模板放第一个，不可修改删除
 public class ActivityModelList extends BaseActivity {

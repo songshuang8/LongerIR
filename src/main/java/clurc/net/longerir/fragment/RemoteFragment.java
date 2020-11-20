@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,8 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
-
 
 import com.google.zxing.client.android.MNScanManager;
 import com.google.zxing.client.android.other.MNScanCallback;
@@ -28,15 +25,9 @@ import com.google.zxing.client.android.utils.ZXingUtils;
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
 import com.qmuiteam.qmui.util.QMUILangHelper;
 import com.qmuiteam.qmui.widget.QMUIRadiusImageView;
-import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import clurc.net.longerir.Utils.DialogShowImage;
 import clurc.net.longerir.Utils.DialogTxtEditor;
@@ -44,7 +35,7 @@ import clurc.net.longerir.Utils.SysFun;
 import clurc.net.longerir.activity.IrLearAc;
 import clurc.net.longerir.activity.MyShareList;
 import clurc.net.longerir.activity.PrcAcCommu;
-import clurc.net.longerir.activity.RemotePlay2;
+import clurc.net.longerir.activity.RemotePlay;
 import clurc.net.longerir.activity.RemotePlayAcLearn;
 import clurc.net.longerir.activity.SearchHis;
 import clurc.net.longerir.data.IrButton;
@@ -391,7 +382,7 @@ public class RemoteFragment extends BaseFragment {
                 if(CfgData.myremotelist.get(idx).isAc==CfgData.AcLear)
                     intent.setClass(context, RemotePlayAcLearn.class);
                 else
-                    intent.setClass(context, RemotePlay2.class);
+                    intent.setClass(context, RemotePlay.class);
                 intent.putExtra("pos", idx);
                 ((Activity)context).startActivity(intent);
             }

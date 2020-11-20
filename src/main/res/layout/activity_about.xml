@@ -70,6 +70,15 @@
             android:layout_marginRight="20dp"
             android:background="@mipmap/about_line" />
 
+        <TextView
+            android:id="@+id/datachanged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/line2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/str_data_change"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/txt1"

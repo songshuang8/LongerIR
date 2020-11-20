@@ -19,12 +19,12 @@
         android:fitsSystemWindows="true"
         android:orientation="vertical">
 
-        <clurc.net.longerir.view.ViewDragGrid
+        <clurc.net.longerir.view.ViewPlayGird
             android:id="@+id/vgv"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1">
-        </clurc.net.longerir.view.ViewDragGrid>
+        </clurc.net.longerir.view.ViewPlayGird>
 
     </LinearLayout>
 

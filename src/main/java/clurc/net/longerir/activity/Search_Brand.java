@@ -1,15 +1,20 @@
 package clurc.net.longerir.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,15 +32,17 @@ import java.util.List;
 
 import clurc.net.longerir.BaseApplication;
 import clurc.net.longerir.R;
+import clurc.net.longerir.adapt.SingleTextAdapt;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
+import clurc.net.longerir.data.RemoteInfo;
 import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.manager.CharacterParser;
 import clurc.net.longerir.view.SegmentedRadioGroup;
 import clurc.net.longerir.view.SideBar;
 
 public class Search_Brand extends BaseActivity {
-    private ArrayAdapter<String> adapter;
+    private SingleTextAdapt adapter;
     private EditText medit;
     private SideBar mbar;
     private ListView mlist;
@@ -65,8 +72,7 @@ public class Search_Brand extends BaseActivity {
         shrremote_brands = BaseApplication.getMyApplication().getShrremote_brands();
         ownerremote_brands = new ArrayList<String>();
         mlist = (ListView)findViewById(R.id.listview);
-        adapter = new ArrayAdapter<String>(
-                instance, R.layout.listview_singletext,R.id.textView, brandModeVec);
+        adapter = new SingleTextAdapt(instance,R.layout.listview_singletext,R.id.textView,brandModeVec);
         mlist.setAdapter(adapter);
         mlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

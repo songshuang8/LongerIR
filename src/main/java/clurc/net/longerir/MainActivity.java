@@ -82,13 +82,7 @@ public class MainActivity extends AppCompatActivity {
         initTabs();
         initPagers();
         //
-        TimeZone azone = TimeZone.getDefault();
-        String  strid = azone.getID();
-        if(strid.contains("Shanghai")){  //Asia/Shanghai
-            CfgData.dataidx = 4;
-        }else if(strid.contains("America")){
-            CfgData.dataidx = 3;
-        }
+        CfgData.getDataVersion(this,false);
         // data
         SsSerivce.getInstance().Start(this);
         //7980的模板
@@ -98,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         //
         CfgData.OpenConfig(this);
         mCircleProgressBar = findViewById(R.id.circleProgressBar);
+        TimeZone azone = TimeZone.getDefault();
+        String  strid = azone.getID();
         dochkUpdate(strid);
         CfgData.mobileserial = MobileUUID.getUniquePsuedoID2(this);
         //

@@ -26,9 +26,6 @@ import clurc.net.longerir.data.modeldata.DataModelBtnInfo;
 import clurc.net.longerir.data.modeldata.DataModelInfo;
 import clurc.net.longerir.view.RemoteBtnView;
 import clurc.net.longerir.view.ViewDragGrid;
-import clurc.net.longerir.view.ViewDragGridReadOnly;
-
-import static clurc.net.longerir.manager.UiUtils.getString;
 
 public class ActivityModelEdit extends BaseActivity {
     private QMUIDialog.EditTextDialogBuilder builder;

@@ -75,13 +75,6 @@ public class RemoteBtnView  extends AppCompatImageView {
     public void draw(Canvas canvas) {
         int w = getWidth();
         int h = getHeight();
-        int r;
-        if(w>h) {
-            r = h / 2;
-        }else{
-            r = w / 2;
-        }
-        r-=(stroke+2);
         super.draw(canvas);
         canvas.drawColor(Color.WHITE);
         //-------------

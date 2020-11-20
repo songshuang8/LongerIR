@@ -65,4 +65,8 @@
     <color name="defaultTextview">#424242</color>  //默认文字的颜色
     <color name="mainColor">#FF294C</color>
 
+    <color name="btnNomral">#ff0099cc</color>
+    <color name="btnPres">#00BCD4</color>
+    <color name="btnBack">#aaa</color>
+    <color name="infobak">#FFFFFFF8</color>
 </resources>

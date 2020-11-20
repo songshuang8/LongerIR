@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import clurc.net.longerir.R;
+import clurc.net.longerir.adapt.SingleTextAdapt;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.webHttpClientCom;
@@ -26,7 +27,7 @@ import clurc.net.longerir.data.webHttpClientCom;
 public class SelectDeviceType2 extends BaseActivity {
     private ListView devlist;
     private int looktype;
-    private String[] devs;
+    private List<String> arr;
     private String sel;
 
     @Override
@@ -39,6 +40,7 @@ public class SelectDeviceType2 extends BaseActivity {
     @Override
     public void DoInit() {
         devlist = findViewById(R.id.listview);
+        arr = new ArrayList<String>();
         devlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -46,7 +48,7 @@ public class SelectDeviceType2 extends BaseActivity {
                 if(i==0){
                     sel = "ALL";
                 }else {
-                    sel = devs[i];
+                    sel = arr.get(i);
                 }
                 if(looktype==0) {
                     intent.putExtra("devname", sel);
@@ -82,12 +84,12 @@ public class SelectDeviceType2 extends BaseActivity {
 
     private void CopyThereItems(){
         if(CfgData.devitems==null)return;
-        devs = new String[CfgData.devitems.size()+1];
-        devs[0] = getString(R.string.str_all);
+        arr.clear();
+        arr.add(getString(R.string.str_all));
         for (int i = 0; i < CfgData.devitems.size(); i++) {
-            devs[i+1] = CfgData.devitems.get(i);
+            arr.add(CfgData.devitems.get(i));
         }
-        ArrayAdapter<String> adpt = new ArrayAdapter<String>(instance, R.layout.listview_singletext,R.id.textView, devs);
+        SingleTextAdapt adpt = new SingleTextAdapt(instance,R.layout.listview_singletext,R.id.textView,arr);
         devlist.setAdapter(adpt);//用android内置布局，或设计自己的样式
         adpt.notifyDataSetChanged();
     }

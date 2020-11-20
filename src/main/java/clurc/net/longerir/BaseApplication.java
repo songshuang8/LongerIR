@@ -57,6 +57,11 @@ public class BaseApplication extends Application {
         return sysremote_brands;
     }
 
+    public void ClearRemoteCache(){
+        sysremote_brands.clear();
+        shrremote_brands.clear();
+    }
+
     public List<String> getShrremote_brands() {
         return shrremote_brands;
     }

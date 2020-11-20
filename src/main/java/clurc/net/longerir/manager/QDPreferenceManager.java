@@ -28,8 +28,7 @@ public class QDPreferenceManager {
 
     private static final String APP_showtype = "app_showdestype";
     private static final String APP_seldes = "app_seldes";
-
-
+    private static final String APP_database = "app_database";
 
     private QDPreferenceManager(Context context) {
         sPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -130,6 +129,16 @@ public class QDPreferenceManager {
     public void setAPP_usertype(int aval) {
         SharedPreferences.Editor editor = sPreferences.edit();
         editor.putInt(APP_usertype, aval);
+        editor.apply();
+    }
+
+    public int getDataSet() {
+        return sPreferences.getInt(APP_database,-1);
+    }
+
+    public void setDataset(int aval) {
+        SharedPreferences.Editor editor = sPreferences.edit();
+        editor.putInt(APP_database, aval);
         editor.apply();
     }
     //---------------------

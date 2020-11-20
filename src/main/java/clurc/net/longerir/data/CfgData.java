@@ -25,11 +25,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.TimeZone;
 
 import clurc.net.longerir.BaseApplication;
 import clurc.net.longerir.R;
 import clurc.net.longerir.Utils.MoudelFile;
 import clurc.net.longerir.Utils.SysFun;
+import clurc.net.longerir.data.modeldata.DataModelBtnInfo;
 import clurc.net.longerir.ircommu.DesRemote;
 import clurc.net.longerir.ircommu.DesRemoteBtn;
 import clurc.net.longerir.manager.QDPreferenceManager;
@@ -141,6 +143,18 @@ public class CfgData {
         }
         mSQLiteDatabase.close();
         return btnlist;
+    }
+
+    public static  int getMaxCols(List<BtnInfo> btns){
+        int ret = 0;
+        for (int i = 0; i < btns.size(); i++) {
+            BtnInfo v = btns.get(i);
+            if(v.col>ret){
+                ret = v.col;
+            }
+        }
+        ret++;
+        return ret;
     }
 
     private static void CreatemyTable(SQLiteDatabase mSQLiteDatabase){
@@ -1001,5 +1015,33 @@ public class CfgData {
             s+="\r\n";
         }
         return s;
+    }
+
+    public static void getDataVersion(Context context,boolean clearche){
+        int olddata = CfgData.dataidx;
+        int d = QDPreferenceManager.getInstance(context).getDataSet();
+        if (d<0){
+            CfgData.dataidx = 0 ;
+            TimeZone azone = TimeZone.getDefault();
+            String  strid = azone.getID();
+            if(strid.contains("Shanghai")){  //Asia/Shanghai
+                CfgData.dataidx = 4;
+            }else if(strid.contains("America")){
+                CfgData.dataidx = 3;
+            }
+        }else{
+            CfgData.dataidx = 0;
+            switch (d){
+                case 1:
+                    CfgData.dataidx = 3;
+                    break;
+                case 2:
+                    CfgData.dataidx = 4;
+                    break;
+            }
+        }
+        if(olddata!=CfgData.dataidx && clearche){
+            BaseApplication.getMyApplication().ClearRemoteCache();
+        }
     }
 }

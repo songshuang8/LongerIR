@@ -3,6 +3,7 @@ package clurc.net.longerir.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -266,7 +267,11 @@ public class Search_model extends BaseActivity {
             ((TextView) view.findViewById(R.id.tvdct)).setText(String.valueOf(amodel.getDowncnt()));
             ((TextView) view.findViewById(R.id.tvgct)).setText(String.valueOf(amodel.getGoodcnt()));
             ((TextView) view.findViewById(R.id.tvbct)).setText(String.valueOf(amodel.getBadcnt()));
-
+            if((position % 2)==0){
+                view.setBackgroundColor(Color.WHITE);
+            }else{
+                view.setBackgroundColor(getResources().getColor(R.color.infobak));
+            }
             return view;
         }
     }

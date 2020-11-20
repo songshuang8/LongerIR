@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import clurc.net.longerir.R;
+import clurc.net.longerir.adapt.SingleTextAdapt;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.webHttpClientCom;
@@ -31,7 +32,7 @@ import clurc.net.longerir.manager.CharacterParser;
 import clurc.net.longerir.view.SideBar;
 
 public class Search_Brand2 extends BaseActivity {
-    private ArrayAdapter<String> adapter;
+    private SingleTextAdapt adapter;
     private EditText medit;
     private SideBar mbar;
     private ListView mlist;
@@ -51,8 +52,7 @@ public class Search_Brand2 extends BaseActivity {
     @Override
     public void DoInit(){
         mlist = (ListView)findViewById(R.id.listview);
-        adapter = new ArrayAdapter<String>(
-                instance, R.layout.listview_singletext,R.id.textView, brandModeVec);
+        adapter = new SingleTextAdapt(instance,R.layout.listview_singletext,R.id.textView,brandModeVec);
         mlist.setAdapter(adapter);
         mlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
