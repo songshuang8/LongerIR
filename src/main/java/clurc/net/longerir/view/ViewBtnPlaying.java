@@ -1,11 +1,13 @@
 package clurc.net.longerir.view;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
+import android.view.ViewPropertyAnimator;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
@@ -26,6 +28,7 @@ public class ViewBtnPlaying  extends View {
     public int idx;
 
     private boolean ispress=false;
+    private boolean hadAni = false;
     @Override
     public void draw(Canvas canvas) {
         VIEW_W = getWidth();
@@ -36,6 +39,11 @@ public class ViewBtnPlaying  extends View {
         DrawMyShape(canvas, true);
         DrawMyShape(canvas, false);
 
+        if(ispress){
+            mShapePaint.setColor(Color.RED);
+        }else{
+            mShapePaint.setColor(Color.WHITE);
+        }
         darwText(strJieduan(btnName),canvas);
     }
 
@@ -75,9 +83,6 @@ public class ViewBtnPlaying  extends View {
     private void darwText(String showstr,Canvas canvas){
         if (QMUILangHelper.isNullOrEmpty(showstr))
             return;
-        if (QMUILangHelper.isNullOrEmpty(showstr))
-            return;
-        mShapePaint.setColor(Color.WHITE);
         mShapePaint.setStyle(Paint.Style.FILL);
         Paint.FontMetrics fontMetrics=mShapePaint.getFontMetrics();
         float distance=(fontMetrics.bottom - fontMetrics.top)/2 - fontMetrics.bottom;
@@ -141,5 +146,13 @@ public class ViewBtnPlaying  extends View {
     public void setIspress(boolean ispress) {
         this.ispress = ispress;
         invalidate();
+    }
+
+    public boolean isHadAni() {
+        return hadAni;
+    }
+
+    public void setHadAni() {
+        this.hadAni = true;
     }
 }

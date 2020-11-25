@@ -96,7 +96,7 @@ public class RemotePlayAc extends BaseActivity{
         @Override
         public void onClick(View view) {
             if(!CheckIrDaPort(SsSerivce.getInstance().getHidState(),SsSerivce.getInstance().getBlvState())){
-                showMessage(null,getString(R.string.str_nodev));
+                showToast(getString(R.string.str_nodev));
                 return;
             }
             int select = Integer.valueOf((String) view.getTag());

@@ -83,7 +83,7 @@ public class PrcFragment extends BaseFragment {
     @Override
     public  void OnGetView(){
         view = LayoutInflater.from(context).inflate(R.layout.home_prclist, (ViewGroup) root, false);
-        title = context.getString(R.string.str_remote);
+        title = context.getString(R.string.str_program);
         prcinfo = BaseApplication.getMyApplication().getPrcinfo();
     }
 

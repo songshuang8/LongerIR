@@ -37,6 +37,7 @@ import clurc.net.longerir.activity.MyShareList;
 import clurc.net.longerir.activity.PrcAcCommu;
 import clurc.net.longerir.activity.RemotePlay;
 import clurc.net.longerir.activity.RemotePlayAcLearn;
+import clurc.net.longerir.activity.RemotePlayAdjust;
 import clurc.net.longerir.activity.SearchHis;
 import clurc.net.longerir.data.IrButton;
 import java.util.ArrayList;
@@ -72,7 +73,6 @@ public class RemoteFragment extends BaseFragment {
     public RemoteFragment(Context context,View root){
         super(context,root);
     }
-    private QMUIDialog.EditTextDialogBuilder builder;
     private int currindex = -1;
     private QMUIAlphaImageButton leftuserbtn,searchbtn;
     private boolean uictrl=false;

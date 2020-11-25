@@ -206,7 +206,7 @@ public class IrLearAc extends BaseActivity {
                                 toBtnParam16();
                                 if(CfgData.AppendoOrEditMyFile(instance,aremote,btnslist)) {
                                     filechanged = false;
-                                    Toast.makeText(instance, "Save ok", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(instance, getString(R.string.str_save_ok), Toast.LENGTH_SHORT).show();
                                     if(id<0)
                                         CfgData.myremotelist.add(aremote);
                                 }

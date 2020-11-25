@@ -60,6 +60,7 @@ public class ViewPlayGird extends ViewGroup implements View.OnTouchListener{
                 }
                 pressed = true;
                 maxMoveY = 0;
+                mustrefresh = true;
                 break;
             case MotionEvent.ACTION_MOVE:
                 lastMoved = lastY - (int) event.getY();
@@ -85,6 +86,7 @@ public class ViewPlayGird extends ViewGroup implements View.OnTouchListener{
                 }
                 clickIndex  = -1;
                 pressed = false;
+                mustrefresh = true;
                 break;
         }
         return true;
@@ -109,24 +111,6 @@ public class ViewPlayGird extends ViewGroup implements View.OnTouchListener{
         animSet.addAnimation(alpha);
         animSet.setFillEnabled(true);
         animSet.setFillAfter(true);
-
-        animSet.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                StopClearAnimate();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
         v.clearAnimation();
         v.startAnimation(animSet);
         animate = idx;
@@ -163,9 +147,10 @@ public class ViewPlayGird extends ViewGroup implements View.OnTouchListener{
         }
     }
 
+    private int currscr = -1;
+    private boolean mustrefresh = true;
     protected Runnable updateTask = new Runnable() {
         public void run() {
-            int oldscroll = scroll;
             if (clickIndex != -1) {
                 if (lastY < paddingH * 3 && scroll > 0)
                     scroll -= 20;
@@ -178,8 +163,11 @@ public class ViewPlayGird extends ViewGroup implements View.OnTouchListener{
                     lastMoved = 0;
             }
             clampScroll();
-            //if(oldscroll!=scroll)
+            if(currscr!=scroll || mustrefresh) {
                 refreshchild(getLeft(), getTop(), getRight(), getBottom());
+                currscr = scroll;
+                mustrefresh = false;
+            }
             handler.postDelayed(this, 50);
         }
     };

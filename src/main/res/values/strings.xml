@@ -55,7 +55,7 @@
     <string name="str_brand">Brand</string>
     <string name="str_dev">DEV</string>
     <string name="str_id">ID</string>
-    <string name="str_nodev">No valid device</string>
+    <string name="str_nodev">No valid Ir device</string>
     <string name="str_blue_in">Blueble Device Founded</string>
     <string name="str_pls_sel_remote">Please enter brand and model</string>
     <string name="str_sel_desremote">Select a programmable remote control</string>
@@ -211,5 +211,6 @@
     <string name="str_data_china">China</string>
     <string name="str_data_auto">Automatic</string>
     <string name="str_favourite">Favourite</string>
+    <string name="str_btnname_change">Change name</string>
 
 </resources>

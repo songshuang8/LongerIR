@@ -159,25 +159,6 @@ public class BaseActivity  extends AppCompatActivity {
         }, 1500);
     }
 
-//    public void webHttpClientCom.getInstance(instance).RestkHttpCall(String urlparam, String body, String method, final OnActivityEventer aev) {
-//        showwait();
-//        String[] pam = new String[3];
-//        pam[0]=urlparam;pam[1]=body;pam[2] = method;
-//        webtask = new WebHttpRestTask();
-//        webtask.setUiHanler(new Handler(){
-//            @Override
-//            public void handleMessage(Message msg) {
-//
-//            }
-//        });
-//
-//        class MyWebHandler extends Handler {
-//            @Override
-//            public void handleMessage(Message msg) {
-//
-//            }
-//        }
-
     public void DoServiceMesg(int cmd, Intent intent) {
 
     }
