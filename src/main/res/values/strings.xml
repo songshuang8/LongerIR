@@ -205,7 +205,7 @@
     <string name="str_ble_guide">Operation guide</string>
     <string name="str_ble_guide_desc">1)Enable Ble,To Press left and right together2)Disable Ble,Press any key</string>
     <string name="str_vip_select">Select guest id</string>
-    <string name="str_data_change">Change database</string>
+    <string name="str_data_change">Ir Database</string>
     <string name="str_data_europe">Europe</string>
     <string name="str_data_American">America</string>
     <string name="str_data_china">China</string>

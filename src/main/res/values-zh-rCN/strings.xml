@@ -204,7 +204,7 @@
     <string name="str_ble_guide">操作指导</string>
     <string name="str_ble_guide_desc">左右两键齐按激活蓝牙模块，并持续45秒，蓝牙操作时顺延，任意发码键退出，下载过程完成后等待遥控器灯灭后再按键，防止数据丢失；如长时间常亮，可重下载一次</string>
     <string name="str_vip_select">选择客户ID</string>
-    <string name="str_data_change">更改红外库</string>
+    <string name="str_data_change">红外库</string>
     <string name="str_data_china">中国版</string>
     <string name="str_data_American">美洲版</string>
     <string name="str_data_europe">欧洲版</string>

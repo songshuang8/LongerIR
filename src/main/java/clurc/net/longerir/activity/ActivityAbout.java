@@ -20,6 +20,7 @@ import clurc.net.longerir.manager.QDPreferenceManager;
 import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
 
 public class ActivityAbout extends BaseActivity {
+    private TextView database;
     @Override
     public void getViewId() {
         layid = R.layout.activity_about;
@@ -45,7 +46,9 @@ public class ActivityAbout extends BaseActivity {
             Log.e(TAG_SS, "Err get version", e);
         }
         ((TextView)findViewById(R.id.appver)).setText(appv);
-        ((TextView)findViewById(R.id.datachanged)).setOnClickListener(new View.OnClickListener() {
+        database = findViewById(R.id.datachanged);
+        showCurrDataName();
+        database.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String[] items = new String[4];
@@ -62,10 +65,20 @@ public class ActivityAbout extends BaseActivity {
                                 dialog.dismiss();
                                 QDPreferenceManager.getInstance(instance).setDataset(which-1);
                                 CfgData.getDataVersion(instance,true);
+                                showCurrDataName();
                             }
                         })
                         .create(com.qmuiteam.qmui.R.style.QMUI_Dialog).show();
             }
         });
+    }
+
+    private void showCurrDataName(){
+        String dataname = getString(R.string.str_data_europe);
+        if(CfgData.dataidx==3)
+            dataname = getString(R.string.str_data_American);
+        else if(CfgData.dataidx == 4)
+            dataname = getString(R.string.str_data_china);
+        database.setText(getString(R.string.str_data_change)+":"+dataname);
     }
 }
