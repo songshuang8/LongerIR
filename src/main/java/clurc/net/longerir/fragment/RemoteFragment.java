@@ -68,13 +68,13 @@ public class RemoteFragment extends BaseFragment {
     private static String qrcodeTitle = "longerir://add/";
     private DevicesItemAdapter deviceAdapter = null;
     private EditText filter;
-    private LinearLayout pnlsearch;
+    private LinearLayout pnlsearch,pnlTips;
 
     public RemoteFragment(Context context,View root){
         super(context,root);
     }
     private int currindex = -1;
-    private QMUIAlphaImageButton leftuserbtn,searchbtn;
+    private QMUIAlphaImageButton leftuserbtn,appendbtn;
     private boolean uictrl=false;
 
     @Override
@@ -156,25 +156,29 @@ public class RemoteFragment extends BaseFragment {
                 }).build().show();
             }
         });
-        //搜索
-        searchbtn = mTopBar.addRightImageButton(android.R.drawable.ic_menu_search,R.id.topbar_searchbtn);
-        searchbtn.setOnClickListener(new View.OnClickListener() {
+        //增加遥控器
+        //searchbtn = mTopBar.addRightImageButton(android.R.drawable.ic_menu_search,R.id.topbar_searchbtn);
+        appendbtn = mTopBar.addRightImageButton(R.mipmap.add,R.id.topbar_searchbtn);
+        appendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((Activity) context).startActivityForResult(new Intent(context, SearchHis.class),101);
+                ((Activity) context).startActivityForResult(new Intent(context,SelectSearchMode.class),23);
             }
         });
+        //搜索
+        pnlTips = view.findViewById(R.id.pnl_tips);
         pnlsearch = view.findViewById(R.id.pnl_search);
         filter = view.findViewById(R.id.myremotefilter);
-        ImageButton delsear = view.findViewById(R.id.imageButton2);
-        delsear.setOnClickListener(new View.OnClickListener() {
+        //ImageButton delsear = view.findViewById(R.id.imageButton2);
+        filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pnlsearch.setVisibility(View.GONE);
-                filter.setText("");
-                deviceAdapter.setIsearch(false);
+                String s = filter.getText().toString();
+                if(s.length()==0)
+                    ((Activity) context).startActivityForResult(new Intent(context, SearchHis.class),101);
             }
         });
+
         filter.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -189,7 +193,6 @@ public class RemoteFragment extends BaseFragment {
 
             }
         });
-        pnlsearch.setVisibility(View.GONE);
         //读取我的遥控器列表
         CfgData.readMyRemote(context,CfgData.myremotelist);
         ListView mlist = view.findViewById(R.id.listview);
@@ -388,13 +391,6 @@ public class RemoteFragment extends BaseFragment {
                 ((Activity)context).startActivity(intent);
             }
         });
-        //---添加方式
-        ((QMUIRadiusImageView)view.findViewById(R.id.btnappend)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((Activity) context).startActivityForResult(new Intent(context,SelectSearchMode.class),23);
-            }
-        });
     }
 
     @Override
@@ -426,7 +422,6 @@ public class RemoteFragment extends BaseFragment {
                 String searchstr = data.getStringExtra("searchstr");
                 if (QMUILangHelper.isNullOrEmpty(searchstr))return;
                 uictrl=true;
-                pnlsearch.setVisibility(View.VISIBLE);
                 filter.setText(searchstr);
                 uictrl = false;
                 deviceAdapter.setFilterstr(searchstr.toUpperCase());
@@ -515,5 +510,15 @@ public class RemoteFragment extends BaseFragment {
     @Override
     public void DoOnResume(){
         deviceAdapter.ChangeInvalid();
+        if(CfgData.myremotelist.size()<5){
+            pnlsearch.setVisibility(View.GONE);
+        }else{
+            pnlsearch.setVisibility(View.VISIBLE);
+        }
+        if(CfgData.myremotelist.size()>0){
+            pnlTips.setVisibility(View.GONE);
+        }else{
+            pnlTips.setVisibility(View.VISIBLE);
+        }
     }
 }

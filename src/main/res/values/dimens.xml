@@ -6,7 +6,7 @@
     <!-- ListView -->
     <dimen name="list_divider_height">1px</dimen>
     <dimen name="list_divider_height_negative">-1px</dimen>
-    <dimen name="list_ss_item_height">35dp</dimen>
+    <dimen name="list_ss_item_height">42dp</dimen>
     <!-- Helper 系列界面 -->
 
     <!-- ColorHelper 颜色工具 -->

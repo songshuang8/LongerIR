@@ -212,5 +212,6 @@
     <string name="str_data_auto">Automatic</string>
     <string name="str_favourite">Favourite</string>
     <string name="str_btnname_change">Change name</string>
+    <string name="str_tips_add">No remote control,Click + to search</string>
 
 </resources>

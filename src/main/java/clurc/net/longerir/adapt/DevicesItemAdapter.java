@@ -250,14 +250,7 @@ public class DevicesItemAdapter extends BaseAdapter {
 
     public void setFilterstr(String filterstr) {
         this.filterstr = filterstr;
-        isearch = true;
-        prePreData();
-        notifyDataSetChanged();
-    }
-
-    public void setIsearch(boolean isearch) {
-        this.isearch = isearch;
-        filterstr = "";
+        isearch = filterstr.length()>0?true:false;
         prePreData();
         notifyDataSetChanged();
     }

@@ -51,15 +51,16 @@ public class SearchHis  extends BaseActivity {
     @Override
     public void getViewId() {
         layid = R.layout.activity_bar_search;
+        title = getString(R.string.str_search);
     }
     @Override
     public void DoInit() {
-        View view = LayoutInflater.from(instance).inflate(R.layout.bar_input_search,null, false);
-        RelativeLayout.LayoutParams editTextLP = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        editTextLP.addRule(RelativeLayout.CENTER_VERTICAL);
-        mTopBar.addRightView(view,R.id.main_bar_seach,editTextLP);
-        edtinput = view.findViewById(R.id.editsearch);
-        btns =view.findViewById(R.id.btnseach);
+        //View view = LayoutInflater.from(instance).inflate(R.layout.bar_input_search,null, false);
+        //RelativeLayout.LayoutParams editTextLP = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        //editTextLP.addRule(RelativeLayout.CENTER_VERTICAL);
+        //mTopBar.addRightView(view,R.id.main_bar_seach,editTextLP);
+        edtinput = findViewById(R.id.editsearch);
+        btns =findViewById(R.id.btnseach);
         btns.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

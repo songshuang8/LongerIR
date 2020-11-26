@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_color_theme_1"
@@ -16,13 +17,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/qmui_config_color_white"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/qmui_config_color_white">
+
+            <EditText
+                android:id="@+id/editsearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@drawable/edit_background"
+                android:ems="8"
+                android:padding="4dp"
+                android:inputType="textPersonName"
+                android:singleLine="true" />
+
+            <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                android:id="@+id/btnseach"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="@string/str_search"
+                app:qmui_backgroundColor="@color/app_color_blue_3"
+                app:qmui_borderColor="@color/app_color_blue"
+                app:qmui_borderWidth="1px"
+                app:qmui_skin_background="?attr/app_skin_btn_test_bg_single"
+                app:qmui_skin_border="?attr/app_skin_btn_test_border_single" />
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:layout_height="320dp"
+            android:orientation="vertical">
 
             <TextView
                 style="@style/Base.TextAppearance.AppCompat.Body1"
@@ -46,6 +80,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/btn_his_delete"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentBottom="true"
                 android:background="@color/qmui_config_color_white" />
         </RelativeLayout>
 
@@ -53,8 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="false"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/hotsou"
@@ -118,7 +153,6 @@
                 android:focusableInTouchMode="true" />
 
         </LinearLayout>
-
     </LinearLayout>
 
 </LinearLayout>
