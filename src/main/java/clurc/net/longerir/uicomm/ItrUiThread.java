@@ -14,12 +14,11 @@ public class ItrUiThread {
         ctx.sendBroadcast(intent);
     }
 
-    public static void toBroadcastLearInfo(Context ctx,String wavestr,String decode,int freq) {
+    public static void toBroadcastLearInfo(Context ctx,String wavestr,int freq) {
         Intent intent = new Intent(brod_ui);
         intent.putExtra("cmd", BROD_CMDUI_LEARNDATA);
         intent.putExtra("wavestr", wavestr);
         intent.putExtra("freq", freq);
-        intent.putExtra("decode", decode);
         ctx.sendBroadcast(intent);
     }
 

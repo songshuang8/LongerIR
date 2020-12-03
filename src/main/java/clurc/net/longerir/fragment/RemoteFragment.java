@@ -170,14 +170,14 @@ public class RemoteFragment extends BaseFragment {
         pnlsearch = view.findViewById(R.id.pnl_search);
         filter = view.findViewById(R.id.myremotefilter);
         //ImageButton delsear = view.findViewById(R.id.imageButton2);
-        filter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String s = filter.getText().toString();
-                if(s.length()==0)
-                    ((Activity) context).startActivityForResult(new Intent(context, SearchHis.class),101);
-            }
-        });
+//        filter.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String s = filter.getText().toString();
+//                if(s.length()==0)
+//                    ((Activity) context).startActivityForResult(new Intent(context, SearchHis.class),101);
+//            }
+//        });
 
         filter.addTextChangedListener(new TextWatcher() {
             @Override

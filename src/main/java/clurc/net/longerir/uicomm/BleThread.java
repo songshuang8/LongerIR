@@ -28,7 +28,6 @@ public class BleThread extends Thread{
 
     private volatile boolean blvcomCancel = false;
     private volatile boolean learning = false;
-    private volatile boolean candecode = true;
 
     public void init(Context actx){
         Log.i(TAG_SS, "创建BLE对象");
@@ -128,14 +127,7 @@ public class BleThread extends Thread{
                 if (wavestr.length() > 3) {
                     final int freq = ld.getFreq();
                     Log.w(TAG_SS,"===>lear:"+freq+","+wavestr);
-                    if(candecode) {
-                        webHttpClientCom.HttpRet ret = webHttpClientCom.getInstance(null).ThreadHttpCall("DoLearPro2?freq=" + freq, wavestr, "POST");
-                        if(ret.result) {
-                            ItrUiThread.toBroadcastLearInfo(ctx, wavestr, new String(ret.data), freq);
-                        };
-                    }else{
-                        ItrUiThread.toBroadcastLearInfo(ctx, wavestr,null, freq);
-                    }
+                    ItrUiThread.toBroadcastLearInfo(ctx, wavestr,freq);
                 }
                 ld.clear();
             }
@@ -238,9 +230,5 @@ public class BleThread extends Thread{
 
     public int[] getRushwave() {
         return rushwave;
-    }
-
-    public void setCandecode(boolean candecode) {
-        this.candecode = candecode;
     }
 }

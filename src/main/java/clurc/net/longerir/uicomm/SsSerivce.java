@@ -174,11 +174,4 @@ public class SsSerivce {
             }
         }
     }
-
-    public void setCanDecoder(boolean candecode){
-        if (threadhid.getHid() != null)
-            threadhid.setCandecode(candecode);
-        if (threadble.getMyblv() != null)
-            threadble.setCandecode(candecode);
-    }
 }

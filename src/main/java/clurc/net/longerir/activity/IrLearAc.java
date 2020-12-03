@@ -110,6 +110,7 @@ public class IrLearAc extends BaseActivity {
                 sub[j] = findViewById(AcUltils.rid[i][j]);
                 sub[j].setTag(new Point(i,j-1));
                 //点击各状态
+                if(j>0)
                 sub[j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -216,8 +217,6 @@ public class IrLearAc extends BaseActivity {
                 });
         //
         SetColorChanged(-1);
-        //设置学习不解码
-        SsSerivce.getInstance().setCanDecoder(false);
     }
 
     private void dofinnish(){

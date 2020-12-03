@@ -88,6 +88,7 @@ public class BlueDeiceCommu {
         Log.i(TAG_SS, "创建Ble主类");
         canconnect = true;
         mdevice = null;
+        mBluetoothGatt = null;
     }
 
     public  void setInit(Context context) {
@@ -117,6 +118,11 @@ public class BlueDeiceCommu {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 mConnectionState = BluetoothProfile.STATE_DISCONNECTED;
                 Log.i(TAG_SS, "断开");
+                if(mBluetoothGatt!=null){
+                    mBluetoothGatt.disconnect();
+                    mBluetoothGatt.close();
+                    mBluetoothGatt = null;
+                }
                 mdevice = null;
                 canconnect = true;
             }
@@ -311,6 +317,7 @@ public class BlueDeiceCommu {
         if(canconnect==false) {
             Log.d(TAG_SS, "blue do dis");
             mBluetoothGatt.disconnect();
+            mBluetoothGatt.close();
             canconnect = true;
         }
         context.unregisterReceiver(bluestates);
@@ -366,18 +373,27 @@ public class BlueDeiceCommu {
                             //Log.e("onReceive---------蓝牙正在打开中");
                             break;
                         case BluetoothAdapter.STATE_ON:
-                            //Log.e("onReceive---------蓝牙已经打开");
+                            Log.d(TAG_SS,"蓝牙已经打开");
+                            if(mBluetoothGatt!=null){
+                                mBluetoothGatt.disconnect();
+                                mBluetoothGatt.close();
+                                mBluetoothGatt = null;
+                            }
+                            mConnectionState = BluetoothProfile.STATE_DISCONNECTED;
+                            canconnect=true;
                             break;
                         case BluetoothAdapter.STATE_TURNING_OFF:
-                            //Log.e("onReceive---------蓝牙正在关闭中");
-                            if(canconnect==false) {
-                                Log.d(TAG_SS, "blue do dis");
+                            Log.d(TAG_SS,"蓝牙正在关闭");
+                            if(mBluetoothGatt!=null){
                                 mBluetoothGatt.disconnect();
-                                canconnect = true;
+                                mBluetoothGatt.close();
+                                mBluetoothGatt = null;
                             }
+                            canconnect=false;
+                            mConnectionState = BluetoothProfile.STATE_DISCONNECTED;
                             break;
                         case BluetoothAdapter.STATE_OFF:
-                            //Log.e("onReceive---------蓝牙已经关闭");
+                            Log.d(TAG_SS,"蓝牙已经关闭");
                             break;
                     }
                     break;

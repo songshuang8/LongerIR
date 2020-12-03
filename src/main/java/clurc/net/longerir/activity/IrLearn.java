@@ -25,6 +25,7 @@ import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.RemoteInfo;
 import clurc.net.longerir.data.modeldata.DataModelBtnInfo;
 import clurc.net.longerir.data.modeldata.DataModelInfo;
+import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.uicomm.SsSerivce;
 import clurc.net.longerir.view.RemoteBtnView;
 import clurc.net.longerir.view.ViewDragGrid;
@@ -173,8 +174,6 @@ public class IrLearn extends BaseActivity {
                         });
                     }
                 });
-        //设置学习解码
-        SsSerivce.getInstance().setCanDecoder(true);
     }
 
     private void dofinnish(){
@@ -189,24 +188,28 @@ public class IrLearn extends BaseActivity {
                 if(mselectbtn==null)return;
                 String wavestr = (String) intent.getSerializableExtra("wavestr");
                 int freq = (int) intent.getSerializableExtra("freq");
-                String decodestr = (String) intent.getSerializableExtra("decode");
-                String codestr = null;
-                try {
-                    JSONObject jsonObj = new JSONObject(decodestr);
-                    if(jsonObj.getInt("result")==0){
-                        codestr = jsonObj.getString("code");
+
+                webHttpClientCom.getInstance(instance).RestkHttpCall("DoLearPro2?freq=" + freq, wavestr,"POST", new webHttpClientCom.WevEvent_SucString() {
+                    @Override
+                    public void onSuc(String res) {
+                        String codestr = null;
+                        try {
+                            JSONObject jsonObj = new JSONObject(res);
+                            if(jsonObj.getInt("result")==0){
+                                codestr = jsonObj.getString("code");
+                            }
+                        }catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if(codestr!=null) {
+                            filechanged = true;
+                            setCurrIrData(freq,codestr);
+                            AutoSelectNextButton();
+                        }else {
+                            Toast.makeText(instance, wavestr, Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }catch (JSONException e) {
-                    e.printStackTrace();
-                    break;
-                }
-                if(codestr!=null) {
-                    filechanged = true;
-                    setCurrIrData(freq,codestr);
-                    AutoSelectNextButton();
-                }else {
-                    Toast.makeText(instance, wavestr, Toast.LENGTH_SHORT).show();
-                }
+                });
                 break;
             case SsSerivce.BROD_CMDUI_HIDSTATE:
                 if(CfgData.selectIr==0){

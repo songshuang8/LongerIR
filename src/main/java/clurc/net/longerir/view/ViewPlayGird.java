@@ -107,6 +107,24 @@ public class ViewPlayGird extends ViewGroup implements View.OnTouchListener{
         AlphaAnimation alpha = new AlphaAnimation(1, .2f);
         alpha.setDuration(300);
 
+        animSet.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                animation.cancel();
+                StopClearAnimate();
+                mustrefresh = true;
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         animSet.addAnimation(scale);
         animSet.addAnimation(alpha);
         animSet.setFillEnabled(true);

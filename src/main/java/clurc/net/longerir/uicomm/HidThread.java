@@ -28,7 +28,6 @@ public class HidThread extends Thread{
     private volatile boolean readinfo = false;
     private volatile boolean learning = false;
     private volatile boolean ircomCancel = false;
-    private volatile boolean candecode = true;
 
     private volatile byte[] prcsenddata=null;
     private volatile byte[] codedata=null;
@@ -119,14 +118,7 @@ public class HidThread extends Thread{
                                 if (wavestr.length() > 3) {
                                     final int freq = ld.getFreq();
                                     Log.w(TAG_SS,"===>lear:"+freq+","+wavestr);
-                                    if(candecode) {
-                                        webHttpClientCom.HttpRet ret = webHttpClientCom.getInstance(null).ThreadHttpCall("DoLearPro2?freq=" + freq, wavestr, "POST");
-                                        if(ret.result) {
-                                            ItrUiThread.toBroadcastLearInfo(ctx, wavestr, new String(ret.data), freq);
-                                        };
-                                    }else{
-                                        ItrUiThread.toBroadcastLearInfo(ctx, wavestr, null, freq);
-                                    }
+                                    ItrUiThread.toBroadcastLearInfo(ctx, wavestr,freq);
                                 }
                                 ld.clear();
                             }
@@ -405,9 +397,5 @@ public class HidThread extends Thread{
     public void setRushwave(int freq,int[] rushwave) {
         this.rushfreq = freq;
         this.rushwave = rushwave;
-    }
-
-    public void setCandecode(boolean candecode) {
-        this.candecode = candecode;
     }
 }

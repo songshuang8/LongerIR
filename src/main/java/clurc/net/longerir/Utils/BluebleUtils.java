@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class BluebleUtils {
-    public static String CON_DEV_MAC = "CB:A9:87:65:43:21";
+    public static String CON_DEV_MAC = "CC:A9:87:65:43:21"; // 遥控器与收发器的区别改这里
     public static String SSBLE_SERVER = "00001810-0000-1000-8000-00805f9b34fb";
     public static String SSBLE_CHARI_PRESSURE =    "00002a35-0000-1000-8000-00805f9b34fb"; /// rx
     public static String SSBLE_CHARI_BYTE8 =  "00002a49-0000-1000-8000-00805f9b34fb";

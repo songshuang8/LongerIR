@@ -1,9 +1,12 @@
 package clurc.net.longerir.Utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ListView;
 
 import clurc.net.longerir.R;
+
+import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
 
 public class AcUltils {
     public static int[][] rid = {

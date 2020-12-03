@@ -3,6 +3,7 @@ package clurc.net.longerir.adapt;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import java.util.List;
 import clurc.net.longerir.R;
 import clurc.net.longerir.Utils.AcUltils;
 import clurc.net.longerir.data.BtnInfo;
+
+import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
 
 public class AcRecordAdapt extends BaseAdapter {
     private int[] rcd  = {R.id.lab1,R.id.lab2,R.id.lab3,R.id.lab4,R.id.lab5,R.id.lab6,R.id.lab7,R.id.lab8};
@@ -66,14 +69,18 @@ public class AcRecordAdapt extends BaseAdapter {
             if (position >= btnslist.size()) {
                 if (sta[0] == 0 && dcol > 0)
                     s = "-";
-                else
+                else {
+                    Log.w(TAG_SS,"===>get btn name:"+dcol+":"+sta[dcol]);
                     s = AcUltils.getStatusName(context, dcol, sta[dcol]);
+                }
             } else {
                 BtnInfo abtn = btnslist.get(position);
                 if (abtn.params[0] == 0 && dcol > 0)
                     s = "-";
-                else
+                else {
+                    Log.w(TAG_SS,"===>get btn name2:"+dcol+":"+":"+abtn.params[dcol]);
                     s = AcUltils.getStatusName(context, dcol, abtn.params[dcol]);
+                }
             }
             tv.setText(s);
             SetTextColor(tv, position,position>=btnslist.size());
