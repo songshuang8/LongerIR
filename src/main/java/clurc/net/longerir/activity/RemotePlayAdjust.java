@@ -138,7 +138,7 @@ public class RemotePlayAdjust extends BaseActivity {
         DGViewNew.setCOL_CNT(CfgData.getMaxCols(btnlist));
         //
         for(int i=0;i<btnlist.size();i++){
-            if(btnlist.get(i).gsno<0)continue;
+            if(!CfgData.BtnHasIr(btnlist.get(i)))continue;
             BtnInfo abtn = btnlist.get(i);
             ViewBtnPlaying image = new ViewBtnPlaying(instance,abtn.col,abtn.row,abtn.btnname);
             image.setmShapeKinds(RemoteBtnView.ShapeKinds.values()[btnlist.get(i).shapekinds]);

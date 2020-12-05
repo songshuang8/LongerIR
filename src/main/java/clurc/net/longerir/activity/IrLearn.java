@@ -59,7 +59,6 @@ public class IrLearn extends BaseActivity {
                 DataModelBtnInfo src = amodel.btns.get(i);
                 abtn.keyidx = src.keyidx;
                 abtn.btnname = src.btnname;
-                abtn.gsno = -1;
                 abtn.shapekinds = src.kinds;
                 abtn.row = src.rows;
                 abtn.col = src.cols;
@@ -95,8 +94,7 @@ public class IrLearn extends BaseActivity {
             image.setmShapeKinds(RemoteBtnView.ShapeKinds.values()[btnlist.get(i).shapekinds]);
             image.setKeyidx(btnlist.get(i).keyidx);
             image.setMlearning(true);
-            image.gsno = -1;
-            image.wave = "";
+
             image.setTag(i);
             image.gsno = btnlist.get(i).gsno;
             image.params = btnlist.get(i).params;
@@ -193,20 +191,27 @@ public class IrLearn extends BaseActivity {
                     @Override
                     public void onSuc(String res) {
                         String codestr = null;
+                        int isgood = -1;
                         try {
                             JSONObject jsonObj = new JSONObject(res);
                             if(jsonObj.getInt("result")==0){
                                 codestr = jsonObj.getString("code");
+                            }else {
+                                if(jsonObj.has("good"))
+                                    isgood = jsonObj.getInt("good");
                             }
                         }catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        if(codestr!=null) {
+                        if(codestr!=null ) {
                             filechanged = true;
                             setCurrIrData(freq,codestr);
                             AutoSelectNextButton();
-                        }else {
-                            Toast.makeText(instance, wavestr, Toast.LENGTH_SHORT).show();
+                        }else if(isgood==1) {
+                            setCurrWaveData(freq,wavestr);
+                            AutoSelectNextButton();
+                        }else{
+                            Toast.makeText(instance, getString(R.string.str_try_learn), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -248,6 +253,11 @@ public class IrLearn extends BaseActivity {
                 mselectbtn.param16 += item[i+1] + ",";
             }
         }
+    }
+
+    public void setCurrWaveData(int freq,String wavestr){
+        if(mselectbtn==null)return;
+        mselectbtn.wave =freq + " "+ wavestr;
     }
 
     private void AutoSelectNextButton(){

@@ -58,6 +58,12 @@ public class BleThread extends Thread{
                     continue;
                 }
                 mevents.OnStateChanged(false);
+                sleep(1000);
+                BlueDeiceCommu.getInstance().readModelStr();
+                if(currlearstate){ //当前是否为学习，重启后再次推至
+                    byte[] buf = ItrUiThread.getBleLearCmdData(learning);
+                    BlueDeiceCommu.getInstance().writeMyByte8(buf);
+                }
                 while(!isInterrupted()){
                     if(prcblvsenddata!=null){
                         byte[] copy = new byte[prcblvsenddata.length];

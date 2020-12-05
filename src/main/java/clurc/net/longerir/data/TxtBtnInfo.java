@@ -3,9 +3,10 @@ package clurc.net.longerir.data;
 public class TxtBtnInfo {
     public int keyidx;
     public String keyname;
-    public int gsno;  //作为 freq
+    public int gsno;
     public int[] param;
     public int[] wave;
+    public int freq;
 
     public boolean flag;
 

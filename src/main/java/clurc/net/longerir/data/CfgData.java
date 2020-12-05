@@ -60,7 +60,6 @@ public class CfgData {
     //设备类型列表
     public static List<String> devitems =  new ArrayList<String>();
     //
-    public static List<IrButton> desbuttons;//作为prc跨activity临时使用
     //-----分析服务器数据--------------------------------
     public static boolean ParseBrandArr(List<String> brandlist,String src){
         if(brandlist==null)
@@ -128,9 +127,9 @@ public class CfgData {
                     abtn.wave = cursor.getString(cursor.getColumnIndex("wave"));
                     abtn.col = cursor.getInt(cursor.getColumnIndex("col"));
                     abtn.row = cursor.getInt(cursor.getColumnIndex("rows"));
-                    abtn.imgpath = cursor.getString(cursor.getColumnIndex("img"));
+                    //abtn.imgpath = cursor.getString(cursor.getColumnIndex("img"));
                     abtn.keyidx = cursor.getInt(cursor.getColumnIndex("keyidx"));
-                    if (abtn.param16 != null) {
+                    if (abtn.param16 != null && abtn.param16.length()>0) {
                         String[] item = abtn.param16.split(",");
                         abtn.params = new int[item.length];
                         for (int i = 0; i < item.length; i++) {
@@ -179,7 +178,7 @@ public class CfgData {
                 }
             }
         }
-        //
+        // // img 未用到
         sql= "create table if not exists mybtnlist(id integer PRIMARY KEY AUTOINCREMENT,mid int,btnname text,gsno int,param text,col int,rows int,img text,wave text,keyidx int)";
         mSQLiteDatabase.execSQL(sql);
     }
@@ -230,7 +229,7 @@ public class CfgData {
                 values.put("param", btnlist.get(i).param16);
                 values.put("col", btnlist.get(i).col);
                 values.put("rows", btnlist.get(i).row);
-                values.put("img", btnlist.get(i).imgpath);
+                //values.put("img", btnlist.get(i).imgpath);
                 values.put("keyidx", btnlist.get(i).keyidx);
                 values.put("wave", btnlist.get(i).wave);
                 mSQLiteDatabase.insert("mybtnlist", null, values);
@@ -250,6 +249,26 @@ public class CfgData {
         values.put("fav", armt.fav?1:0);
         mSQLiteDatabase.update("myremote", values,"id=?",new String[]{String.valueOf(armt.id)});
         mSQLiteDatabase.close();
+    }
+
+    public static BtnInfo TransATextBtn(TxtBtnInfo src){
+        BtnInfo viewInfo = new BtnInfo();
+        viewInfo.btnname = src.keyname;
+        viewInfo.gsno = src.gsno;
+        viewInfo.param16 = "";
+        viewInfo.keyidx = src.keyidx;
+        if(src.param!=null) {
+            for (int j = 0; j < src.param.length; j++) {
+                viewInfo.param16 += Integer.toHexString(src.param[j] & 0xffffffff) + ",";
+            }
+        }
+        if(src.wave!=null && src.wave.length>0){
+            viewInfo.wave = src.freq + " ";
+            for (int i = 0; i < src.wave.length; i++) {
+                viewInfo.wave += (src.wave[i] + ",");
+            }
+         }
+        return viewInfo;
     }
 
     public static void TransTxtToBtns(List<TxtBtnInfo> src,List<BtnInfo> des,String dev,int isAc){
@@ -289,20 +308,11 @@ public class CfgData {
                 SysbtnInfo sysbtn = getSysBtnByIdx(devidx, src.get(i).keyidx);
                 if (sysbtn == null) //先排序号给出的 0...86
                     continue;
-                BtnInfo viewInfo = new BtnInfo();
-                viewInfo.btnname = src.get(i).keyname;
+                BtnInfo viewInfo = TransATextBtn(src.get(i));
                 if (QMUILangHelper.isNullOrEmpty(viewInfo.btnname))
                     viewInfo.btnname = sysbtn.btnname;
-
                 viewInfo.row = sysbtn.row;
                 viewInfo.col = sysbtn.col;
-                viewInfo.imgpath = sysbtn.img;
-                viewInfo.gsno = src.get(i).gsno;
-                viewInfo.param16 = "";
-                viewInfo.keyidx = src.get(i).keyidx;
-                for (int j = 0; j < src.get(i).param.length; j++) {
-                    viewInfo.param16 += Integer.toHexString(src.get(i).param[j] & 0xffffffff) + ",";
-                }
                 //-------------
                 src.get(i).flag = true;
                 des.add(viewInfo);
@@ -311,11 +321,9 @@ public class CfgData {
             for (int i = 0; i < src.size(); i++) {
                 if (src.get(i).flag) continue;
 
-                BtnInfo viewInfo = new BtnInfo();
-                viewInfo.btnname = src.get(i).keyname;
+                BtnInfo viewInfo = TransATextBtn(src.get(i));
                 if (QMUILangHelper.isNullOrEmpty(viewInfo.btnname))
                     viewInfo.btnname = "NULL";
-                viewInfo.imgpath = "button/def.png";
                 for (int j = 0; j < 255; j++) {
                     boolean notfound = true;
                     for (int k = 0; k < des.size(); k++) {
@@ -330,13 +338,6 @@ public class CfgData {
                         break;
                     }
                 }
-                viewInfo.gsno = src.get(i).gsno;
-                viewInfo.param16 = "";
-                for (int j = 0; j < src.get(i).param.length; j++) {
-                    viewInfo.param16 += Integer.toHexString(src.get(i).param[j] & 0xffffffff) + ",";
-                }
-                viewInfo.keyidx = src.get(i).keyidx;
-
                 des.add(viewInfo);
                 if (des.size() > 1024) break;//按键超过255，放弃
             }
@@ -460,52 +461,35 @@ public class CfgData {
         }
         return 0;
     }
-    //从txt中获取按键
-    public static List<TxtBtnInfo> GetBtnsFromText(String txtstr){
-        List<TxtBtnInfo> btns = new ArrayList<TxtBtnInfo>();
-        String[] linestr = txtstr.split("\r\n");
-        if(linestr.length<2)
-            linestr = txtstr.split("\n");
-        int from=0;
-        for (int i = 0; i < linestr.length; i++) {
-            if(linestr[i].contains("Button's counts")){
-                from = i+1;
-                break;
-            }
-        }
-        for(int i=from;i<linestr.length;i++){
-            String[] lr=linestr[i].split("=");
-            if(lr.length!=2)continue;
-
-            String[] left = lr[0].split(",");
-            TxtBtnInfo abtn = new TxtBtnInfo();
-            try {
-                abtn.keyidx = Integer.parseInt(left[0]);
-            }catch (NumberFormatException e){
-                continue;
-            }
-            abtn.keyname=null;
-            if(left.length>1)
-                abtn.keyname = left[1];
-
-            String[] right = lr[1].split(" ");
-            int paramlen = right.length-1;
-            if(paramlen<1)continue;
-            abtn.gsno = Integer.parseInt(right[0]);
-            abtn.param = new int[paramlen];
-            int p=0;
-            for (int j = 0; j < paramlen; j++) {
-                try {
-                    abtn.param[p] = Integer.parseInt(right[j+1],16);
-                    p++;
-                }catch (NumberFormatException e){
-                }
-            }
-            btns.add(abtn);
-        }
-        return btns;
+    public static class BtnWaveRet{
+        public int freq;
+        public int[] wave = null;
     }
+    public static BtnWaveRet getWaveKey(String s){
+        BtnWaveRet ret = new BtnWaveRet();
+        if(s==null)return ret;
+        if(s.length()<2)return ret;
+        String[] right = s.split(" ");
+        if(right.length!=2)
+            return ret;
 
+        try {
+            ret.freq = Integer.parseInt(right[0]);
+        }catch (NumberFormatException e){
+            return ret;
+        }
+        String[] wave = right[1].split(",");
+        int[] waveint = new int[wave.length];
+        for (int j = 0; j < wave.length; j++) {
+            try {
+                waveint[j] = Integer.parseInt(wave[j]);
+            }catch (NumberFormatException e){
+                return ret;
+            }
+        }
+        ret.wave = waveint;
+        return ret;
+    }
     //从txt中获取按键
     public static void GetBtnsFromText(List<TxtBtnInfo> btns,String txtstr){
         if(btns==null)
@@ -537,23 +521,11 @@ public class CfgData {
             if(left.length>1)
                 abtn.keyname = left[1];
             if(lr[1].contains(",")){  //fre wavestr
-                String[] right = lr[1].split(" ");
-                if(right.length!=2)
+                BtnWaveRet wavestru = getWaveKey(lr[1]);
+                if(wavestru.wave==null)
                     continue;
-                try {
-                    abtn.gsno = Integer.parseInt(right[0]);
-                }catch (NumberFormatException e){
-                    continue;
-                }
-                String[] wave = right[1].split(",");
-                abtn.wave = new int[wave.length];
-                for (int j = 0; j < wave.length; j++) {
-                    try {
-                        abtn.wave[j] = Integer.parseInt(wave[j]);
-                    }catch (NumberFormatException e){
-                        break;
-                    }
-                }
+                abtn.freq = wavestru.freq;
+                abtn.wave = wavestru.wave;
             }else {
                 String[] right = lr[1].split(" ");
                 int paramlen = right.length - 1;
@@ -615,55 +587,56 @@ public class CfgData {
      * 从Assets中读取图片
      * @return
      */
-    public static Bitmap getImage4Assets(Context context, String filePath) {
-        Bitmap image = null;
-        try {
-            InputStream is = context.getResources().getAssets().open(filePath);
-            image = BitmapFactory.decodeStream(is);
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
+//    public static Bitmap getImage4Assets(Context context, String filePath) {
+//        Bitmap image = null;
+//        try {
+//            InputStream is = context.getResources().getAssets().open(filePath);
+//            image = BitmapFactory.decodeStream(is);
+//            is.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return image;
+//    }
+//
+//    public static Bitmap getBtnBmp(Context context,String btnname, String path, boolean iscustom) {
+//        Bitmap viewBmp = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+//        Canvas canvas = new Canvas(viewBmp);
+//        Paint paint = new Paint();
+//        paint.setFlags(Paint.ANTI_ALIAS_FLAG);
+//        Bitmap bmp=null;
+//        if(!iscustom){
+//            if(QMUILangHelper.isNullOrEmpty(path))
+//                bmp= getImage4Assets(context,"button/def.png");
+//            else
+//                bmp= getImage4Assets(context, path);
+////				bmp=BitmapFactory.decodeResource(getResources(), R.drawable.def);
+//        }else{
+//            if(QMUILangHelper.isNullOrEmpty(path))
+//                bmp= getImage4Assets(context,"button/def.png");
+//            else{
+//                BitmapFactory.Options options = new BitmapFactory.Options();
+//                options.inSampleSize =0;
+//                bmp = BitmapFactory.decodeFile(path, options);
+//                if(bmp==null)
+//                    bmp= getImage4Assets(context,"button/def.png");
+////					bmp=BitmapFactory.decodeResource(instance.getResources(), R.drawable.def);
+//            }
+//        }
+//        int w=bmp.getWidth();
+//        int h=bmp.getHeight();
+//        canvas.drawBitmap(bmp, (100-w)/2,0, paint);
+//        paint.setTextSize(25);
+//        paint.setColor(Color.WHITE);
+//        int fontWidth=(int) paint.measureText(btnname);
+//        if(fontWidth>100){
+//            canvas.drawText(btnname, 0, h+25, paint);
+//        }else{
+//            canvas.drawText(btnname, (100-fontWidth)/2, h+25, paint);
+//        }
+//        return viewBmp;
+//    }
 
-    public static Bitmap getBtnBmp(Context context,String btnname, String path, boolean iscustom) {
-        Bitmap viewBmp = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(viewBmp);
-        Paint paint = new Paint();
-        paint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        Bitmap bmp=null;
-        if(!iscustom){
-            if(QMUILangHelper.isNullOrEmpty(path))
-                bmp= getImage4Assets(context,"button/def.png");
-            else
-                bmp= getImage4Assets(context, path);
-//				bmp=BitmapFactory.decodeResource(getResources(), R.drawable.def);
-        }else{
-            if(QMUILangHelper.isNullOrEmpty(path))
-                bmp= getImage4Assets(context,"button/def.png");
-            else{
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize =0;
-                bmp = BitmapFactory.decodeFile(path, options);
-                if(bmp==null)
-                    bmp= getImage4Assets(context,"button/def.png");
-//					bmp=BitmapFactory.decodeResource(instance.getResources(), R.drawable.def);
-            }
-        }
-        int w=bmp.getWidth();
-        int h=bmp.getHeight();
-        canvas.drawBitmap(bmp, (100-w)/2,0, paint);
-        paint.setTextSize(25);
-        paint.setColor(Color.WHITE);
-        int fontWidth=(int) paint.measureText(btnname);
-        if(fontWidth>100){
-            canvas.drawText(btnname, 0, h+25, paint);
-        }else{
-            canvas.drawText(btnname, (100-fontWidth)/2, h+25, paint);
-        }
-        return viewBmp;
-    }
 
     public static int[] getMyRemoteIdList(boolean isac){
         int len = 0;
@@ -908,8 +881,7 @@ public class CfgData {
             if(aremote.isAc==AcLear) {
                 if (abtn.wave==null) continue;
             }else{
-                if (abtn.gsno < 0) continue;
-                if (abtn.param16 == null || abtn.param16.length() == 0) continue;
+                if(!BtnHasIr(abtn))continue;
             }
             btncount++;
         }
@@ -927,17 +899,20 @@ public class CfgData {
                 }
                 ret += stastr+"="+String.valueOf(abtn.keyidx) + " " + abtn.wave + "\r\n";
             }else{
-                if (abtn.gsno < 0) continue;
-                if (abtn.param16 == null || abtn.param16.length() == 0) continue;
-                //
-                String gsstr = String.valueOf(abtn.gsno);
-                while (gsstr.length() < 4)
-                    gsstr = "0" + gsstr;
+                if (abtn.gsno >= 0 && abtn.param16 != null && abtn.param16.length() > 0) {
+                    String gsstr = String.valueOf(abtn.gsno);
+                    while (gsstr.length() < 4)
+                        gsstr = "0" + gsstr;
 
-                for (int j = 0; j < abtn.params.length; j++) {
-                    gsstr += " " + Integer.toHexString(abtn.params[j]);
+                    for (int j = 0; j < abtn.params.length; j++) {
+                        gsstr += " " + Integer.toHexString(abtn.params[j]);
+                    }
+                    ret += String.valueOf(abtn.keyidx) + "," + abtn.btnname + "=" + gsstr + "\r\n";
+                }else{
+                    if(abtn.wave!=null){
+                        ret += String.valueOf(abtn.keyidx) + "," + abtn.btnname + "=" + abtn.wave + "\r\n";
+                    }
                 }
-                ret += String.valueOf(abtn.keyidx) + "," + abtn.btnname + "=" + gsstr + "\r\n";
             }
         }
         if(aremote.isAc==AcPro){
@@ -1003,34 +978,109 @@ public class CfgData {
         return false;
     }
     //保存按键字符串，提交给服务器 编码
-    public static String getButtonsString(List<IrButton> buttons){
+    public static String createPrcText(DesRemote prcinfo){
         String s ="";
-        for (int i = 0; i < buttons.size(); i++) {
-            IrButton abtn = buttons.get(i);
-            s+=abtn.getPage()+" "+abtn.getSnumber() +" "+ String.valueOf(abtn.getProtocol())+" ";
-            if(abtn.getProtocol()>=0) {
-                int[] params = abtn.getParams();
-                if (params == null) {
-                    return null;
-                }
-                for (int j = 0; j < params.length; j++) {
-                    s += String.valueOf(params[j]) + " ";
-                }
-            }else{
-                int[] wave = abtn.getWave();
-                if (wave == null)
-                    continue;
-                if (wave.length < 3) {
-                    return null;
-                }
-                s +=String.valueOf(abtn.getFreq()) + " ";
-                for (int j = 0; j < wave.length; j++) {
-                    s += String.valueOf(wave[j]) + " ";
+        for (int i = 0; i < prcinfo.pagename.length; i++) {
+            RemoteInfo srcremote = null;
+            for (int j = 0; j < prcinfo.src.size(); j++) {
+                if(prcinfo.src.get(j).pageidx == i){
+                    srcremote = prcinfo.src.get(j);
+                    break;
                 }
             }
-            s+="\r\n";
+            if(srcremote==null)continue;
+            if(srcremote.btns==null)continue;
+            //按键使用位 初始
+            for (int j = 0; j < srcremote.btns.size(); j++) {
+                BtnInfo abtn = srcremote.btns.get(j);
+                int n = abtn.prcidx;
+                if(n<0)continue;
+                if(n>=prcinfo.btns.size())continue;
+
+                if(abtn.gsno>=0 && abtn.params!=null){
+                    s+=i+" "+prcinfo.btns.get(n).s +" "+ String.valueOf(abtn.gsno)+" ";
+                    for (int k = 0; k < abtn.params.length; k++) {
+                        s += String.valueOf(abtn.params[k]) + " ";
+                    }
+                    s+="\r\n";
+                }else{
+                    CfgData.BtnWaveRet wavestru = CfgData.getWaveKey(abtn.wave);
+                    if(wavestru.wave!=null)
+                    {
+                        s+=i+" "+prcinfo.btns.get(n).s +" -1 ";
+                        s +=String.valueOf(wavestru.freq) + " ";
+                        for (int k = 0; k < wavestru.wave.length; k++) {
+                            s += String.valueOf(wavestru.wave[k]) + " ";
+                        }
+                        s+="\r\n";
+                    }
+                }
+            }
         }
         return s;
+    }
+
+    public static boolean BtnHasIr(BtnInfo abtn){
+        return (abtn.gsno>=0 && abtn.params!=null) || (abtn.wave!=null && abtn.wave.length()>0);
+    }
+    //添加下载遥控器并默认排键
+    public static void AppendRemoteToPrc(Context context,int myidx,int pagecurr){
+        DesRemote prcinfo = BaseApplication.getMyApplication().getPrcinfo();
+        if(myidx<0)return;
+        if(CfgData.myremotelist.size()==0)return;
+        RemoteInfo src = CfgData.myremotelist.get(myidx);
+        RemoteInfo rmt = CfgData.CopyNewRemote(src);
+        rmt.btns = CfgData.getBtnInfo(context,src.id);
+        rmt.pageidx = pagecurr;
+        //剔除原有的
+        for (int i = 0; i < prcinfo.src.size(); i++) {
+            if (prcinfo.src.get(i).pageidx == rmt.pageidx) {
+                prcinfo.src.remove(i);
+                break;
+            }
+        }
+        prcinfo.src.add(rmt);
+        // sortIntoDes
+        //按键使用位 初始
+        for (int j = 0; j < rmt.btns.size(); j++) {
+            rmt.btns.get(j).prcidx = -1;
+        }
+        for (int j = 0; j < prcinfo.btns.size(); j++) {
+            prcinfo.btns.get(j).flag = false;
+        }
+        if(rmt.isAc!=0)return;
+        //选择遥控器的按键到目标遥控器
+        for (int j = 0; j < rmt.btns.size(); j++) {
+            BtnInfo abtn = rmt.btns.get(j);
+            if(!BtnHasIr(abtn))continue;
+            int n = -1;
+            for (int k = 0; k < prcinfo.btns.size(); k++) {
+                if(prcinfo.btns.get(k).flag)continue;
+                if(prcinfo.btns.get(k).keyidx==abtn.keyidx){
+                    n = k;
+                    break;
+                }
+            }
+            if(n<0)continue;
+            abtn.prcidx = n;
+            prcinfo.btns.get(n).flag = true;
+        }
+        //未选中的找空位
+        for (int j = 0; j < rmt.btns.size(); j++) {
+            BtnInfo abtn = rmt.btns.get(j);
+            if(abtn.prcidx>=0)continue;
+            if(!BtnHasIr(abtn))continue;
+
+            int n = -1;
+            for (int k = 0; k < prcinfo.btns.size(); k++) {
+                if(prcinfo.btns.get(k).flag)continue;
+                n = k;
+                break;
+            }
+            if(n<0)continue;
+            abtn.prcidx = n;
+            prcinfo.btns.get(n).flag = true;
+        }
     }
 
     public static void getDataVersion(Context context,boolean clearche){

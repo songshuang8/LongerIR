@@ -32,7 +32,6 @@ import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.webHttpClientCom;
 import clurc.net.longerir.manager.QDPreferenceManager;
 
-import static clurc.net.longerir.data.webHttpClientCom.baseurl;
 import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
 
 public class LauncherActivity extends Activity {
@@ -71,7 +70,7 @@ public class LauncherActivity extends Activity {
 
     private void getModelData(){
         String filename = MoudelFile.getModeFile(this); //手机存储地址
-        webHttpClientCom.getInstance(this).BackHttpGetFile(baseurl+"mod_export?flag=0", filename,new webHttpClientCom.OnDownEventer() {
+        webHttpClientCom.getInstance(this).BackHttpGetFile(webHttpClientCom.baseurl+"mod_export?flag=0", filename,new webHttpClientCom.OnDownEventer() {
             @Override
             public void onSuc(final String file) {
                 Log.w(TAG_SS,"===>get model file ok ");

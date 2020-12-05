@@ -19,10 +19,12 @@ import com.qmuiteam.qmui.widget.QMUIProgressBar;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 
+import clurc.net.longerir.BaseApplication;
 import clurc.net.longerir.R;
 import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.webHttpClientCom;
+import clurc.net.longerir.ircommu.DesRemote;
 import clurc.net.longerir.uicomm.MobileIrPort;
 import clurc.net.longerir.uicomm.SsSerivce;
 import pl.droidsonroids.gif.GifImageView;
@@ -72,10 +74,6 @@ public class PrcComuni extends BaseActivity {
 
     @Override
     public void DoInit() {
-        if(CfgData.desbuttons.size()==0){
-            Toast.makeText(instance, "Err founded.Can not made PRC's data!", Toast.LENGTH_SHORT).show();
-            return;
-        }
         mCircleProgressBar = findViewById(R.id.circleProgressBar);
         mbtn = findViewById(R.id.startBtn);
         donghua = findViewById(R.id.imgdonghua);
@@ -162,6 +160,15 @@ public class PrcComuni extends BaseActivity {
                     tips.setText(getString(R.string.str_nodev));
                     if(bble==false && (CfgData.selectIr==1)){
                         mgotble.setVisibility(View.VISIBLE);
+                    }
+                    if(mbtn.getVisibility()==View.GONE){
+                        SsSerivce.getInstance().irStop();
+                        if(amoibleir!=null)
+                            if(amoibleir.getActived())
+                                amoibleir.setCancel();
+                        mCircleProgressBar.setVisibility(View.GONE);
+                        donghua.setVisibility(View.VISIBLE);
+                        mbtn.setVisibility(View.VISIBLE);
                     }
                 }
                 break;
@@ -269,8 +276,10 @@ public class PrcComuni extends BaseActivity {
         mCircleProgressBar.setVisibility(View.VISIBLE);
         donghua.setVisibility(View.GONE);
         ///开始调用主转换函数
+        DesRemote prcinfo = BaseApplication.getMyApplication().getPrcinfo();
+        String s = CfgData.createPrcText(prcinfo);
         webHttpClientCom.getInstance(instance).RestkHttpCall("getTransEep?chip=" + chip + "&force=0",
-                CfgData.getButtonsString(CfgData.desbuttons), "POST", new webHttpClientCom.WevEvent_SucData() {
+                s, "POST", new webHttpClientCom.WevEvent_SucData() {
             @Override
             public void onSuc(byte[] out) {
                 mCircleProgressBar.setProgress(0,false);
@@ -287,7 +296,7 @@ public class PrcComuni extends BaseActivity {
         donghua.setVisibility(View.GONE);
         ///开始调用主转换函数
         Log.w(TAG_SS, "芯片类型："+chipkind+","+Integer.toHexString(remotekey));
-        getAudioData(CfgData.desbuttons, chipkind, remotekey, new webHttpClientCom.WevEvent_SucData() {
+        getAudioData(chipkind, remotekey, new webHttpClientCom.WevEvent_SucData() {
             @Override
             public void onSuc(byte[] data) {
                 mCircleProgressBar.setProgress(0,false);
@@ -297,8 +306,10 @@ public class PrcComuni extends BaseActivity {
     }
 
     private void PrepareDataAndDown(int rmttype){
+        DesRemote prcinfo = BaseApplication.getMyApplication().getPrcinfo();
+        String s = CfgData.createPrcText(prcinfo);
         webHttpClientCom.getInstance(instance).RestkHttpCall("getTransEep?chip=" + rmttype + "&force=0",
-                CfgData.getButtonsString(CfgData.desbuttons), "POST", new webHttpClientCom.WevEvent_SucData() {
+                s, "POST", new webHttpClientCom.WevEvent_SucData() {
                     @Override
                     public void onSuc(byte[] out) {
                         mCircleProgressBar.setProgress(0,false);

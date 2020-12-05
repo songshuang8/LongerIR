@@ -196,7 +196,7 @@ public class ViewPlayAdjust extends ViewGroup implements View.OnTouchListener , 
             } else{
                 clampScroll();
             }
-            if(currscr!=scroll || mustrefresh) {
+            if(currscr!=scroll || mustrefresh || dragged>=0) {
                 refreshAllchild(getLeft(), getTop(), getRight(), getBottom());
                 currscr = scroll;
                 mustrefresh = false;

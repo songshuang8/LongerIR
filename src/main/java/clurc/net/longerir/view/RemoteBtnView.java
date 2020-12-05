@@ -19,6 +19,7 @@ import com.qmuiteam.qmui.util.QMUILangHelper;
 import java.util.List;
 
 import clurc.net.longerir.data.BtnInfo;
+import clurc.net.longerir.data.CfgData;
 
 public class RemoteBtnView  extends AppCompatImageView {
     private Context context;
@@ -38,9 +39,9 @@ public class RemoteBtnView  extends AppCompatImageView {
     private boolean mshift = false;
 
     public int freq;
-    public int gsno;
+    public int gsno = -1;
     public String param16;
-    public String wave;
+    public String wave = null;
     public int[] params;
     public int srcidx = -1;
 
@@ -90,7 +91,7 @@ public class RemoteBtnView  extends AppCompatImageView {
             }
         }else{
             if(mlearning || madjust) {
-                if(gsno<0) {
+                if(gsno<0 && wave==null) {
                     mShapePaint.setColor(mNormalColor);
                 }else{
                     if(mshift)
@@ -108,12 +109,16 @@ public class RemoteBtnView  extends AppCompatImageView {
                 drawAdjustSrc(canvas,w,h);
             }
         }
-        if(mlearning && gsno>=0 && params!=null && params.length>0){
+        if(mlearning){
+            if(gsno>=0 && params!=null && params.length>0) {
                 String s = "";
                 for (int i = 0; i < params.length; i++) {
                     s += Integer.toHexString(params[i]) + " ";
                 }
-                darwText(s.trim(),canvas,w /2,h/2 + getTxtHeight()+4);
+                darwText(s.trim(), canvas, w / 2, h / 2 + getTxtHeight() + 4);
+            }else if(wave!=null && wave.length()>0){
+                darwText("WAVE", canvas, w / 2, h / 2 + getTxtHeight() + 4);
+            }
         }
     }
 

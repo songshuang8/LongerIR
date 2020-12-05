@@ -3,8 +3,6 @@ package clurc.net.longerir.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Ringtone;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,32 +11,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
-
 import com.qmuiteam.qmui.alpha.QMUIAlphaImageButton;
-import com.qmuiteam.qmui.widget.QMUITopBar;
-import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
 import clurc.net.longerir.BaseApplication;
 import clurc.net.longerir.activity.PrcAcCommu;
 import clurc.net.longerir.activity.PrcAdjust;
-import clurc.net.longerir.activity.SelectSearchMode;
 import clurc.net.longerir.activity.UserCenter;
-import clurc.net.longerir.data.IrButton;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import clurc.net.longerir.R;
 import clurc.net.longerir.Utils.MoudelFile;
 import clurc.net.longerir.activity.PrcComuni;
 import clurc.net.longerir.activity.SelectDesType;
-import clurc.net.longerir.activity.SelectIrPort;
 import clurc.net.longerir.activity.SelectMyRemote;
-import clurc.net.longerir.activity.UniversalCode;
-import clurc.net.longerir.activity.UserLogin;
-import clurc.net.longerir.data.BtnInfo;
 import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.RemoteInfo;
 import clurc.net.longerir.data.webHttpClientCom;
@@ -197,6 +182,12 @@ public class PrcFragment extends BaseFragment {
                     return;
                 }
 
+                //获取目标遥控器的按键信息
+                if (prcinfo.btns.size() == 0){
+                    showMessage("Error","Err found,cant not found prcinfo remote control's template");
+                    return;
+                }
+
                 final Intent intent = new Intent();
                 intent.putExtra("desidx",desidx);
                 RemoteInfo armt = prcinfo.src.get(firstidx);
@@ -215,9 +206,13 @@ public class PrcFragment extends BaseFragment {
                         }
                     });
                 }else{
-                    if(AdjustBtnPosition()) {
+                    String s = CfgData.createPrcText(prcinfo);
+                    String[] k = s.split("\r\n");
+                    if(k.length>=2) {
                         intent.setClass(context, PrcComuni.class);
                         ((Activity) context).startActivity(intent);
+                    }else{
+                        showMessage("Error","Err found,buttons is short");
                     }
                 }
             }
@@ -232,66 +227,6 @@ public class PrcFragment extends BaseFragment {
         btngo.setVisibility(View.GONE);
     }
 
-    private void setCurrRemoteFromMyd(int myid,int pagecurr){
-        if(myid<0)return;
-        if(CfgData.myremotelist.size()==0)return;
-        RemoteInfo src = CfgData.myremotelist.get(myid);
-        RemoteInfo rmt = CfgData.CopyNewRemote(src);
-        rmt.btns = CfgData.getBtnInfo(context,src.id);
-        rmt.pageidx = pagecurr;
-        //剔除原有的
-        for (int i = 0; i < prcinfo.src.size(); i++) {
-            if (prcinfo.src.get(i).pageidx == rmt.pageidx) {
-                prcinfo.src.remove(i);
-                break;
-            }
-        }
-        prcinfo.src.add(rmt);
-        // sortIntoDes
-        //按键使用位 初始
-        for (int j = 0; j < rmt.btns.size(); j++) {
-            rmt.btns.get(j).desidx = -1;
-        }
-        for (int j = 0; j < prcinfo.btns.size(); j++) {
-            prcinfo.btns.get(j).flag = false;
-        }
-        if(rmt.isAc!=0)return;
-        //选择遥控器的按键到目标遥控器
-        for (int j = 0; j < rmt.btns.size(); j++) {
-            BtnInfo abtn = rmt.btns.get(j);
-            if(abtn.gsno<0)continue;
-            if(abtn.params==null)continue;
-            int n = -1;
-            for (int k = 0; k < prcinfo.btns.size(); k++) {
-                if(prcinfo.btns.get(k).flag)continue;
-                if(prcinfo.btns.get(k).keyidx==abtn.keyidx){
-                    n = k;
-                    break;
-                }
-            }
-            if(n<0)continue;
-            abtn.desidx = n;
-            prcinfo.btns.get(n).flag = true;
-        }
-        //未选中的找空位
-        for (int j = 0; j < rmt.btns.size(); j++) {
-            BtnInfo abtn = rmt.btns.get(j);
-            if(abtn.desidx>=0)continue;
-            if(abtn.gsno<0)continue;
-            if(abtn.params==null)continue;
-
-            int n = -1;
-            for (int k = 0; k < prcinfo.btns.size(); k++) {
-                if(prcinfo.btns.get(k).flag)continue;
-                n = k;
-                break;
-            }
-            if(n<0)continue;
-            abtn.desidx = n;
-            prcinfo.btns.get(n).flag = true;
-        }
-    }
-
     @Override
     public void doResultOk(int which,Intent data){
         switch (which){
@@ -300,14 +235,14 @@ public class PrcFragment extends BaseFragment {
                 tvmodename.setText(CfgData.modellist.get(desidx).name);
                 prcinfo.pagename = CfgData.modellist.get(desidx).pageName;
                 if(CfgData.myremotelist.size()>0) {
-                    setCurrRemoteFromMyd(data.getIntExtra("myidx", 0), data.getIntExtra("pagesel", 0));
+                    CfgData.AppendRemoteToPrc(context,data.getIntExtra("myidx", 0), data.getIntExtra("pagesel", 0));
                 }
                 //
                 reFreshUI();
             }
                 break;
             case 95:
-                setCurrRemoteFromMyd(data.getIntExtra("myidx",-1),data.getIntExtra("pagesel", 0));
+                CfgData.AppendRemoteToPrc(context,data.getIntExtra("myidx",-1),data.getIntExtra("pagesel", 0));
                 reFreshUI();
                 break;
             case 96: {
@@ -343,49 +278,6 @@ public class PrcFragment extends BaseFragment {
             }
                 break;
         }
-    }
-
-    //把选择的按键排到目标的按键上去
-    private boolean AdjustBtnPosition() {
-        CfgData.desbuttons = new ArrayList<IrButton>();
-        //获取目标遥控器的按键信息
-        if (prcinfo.btns.size() == 0){
-            showMessage("Error","Err found,cant not found prcinfo remote control's template");
-            return false;
-        }
-
-        for (int i = 0; i < prcinfo.pagename.length; i++) {
-            RemoteInfo srcremote = null;
-            for (int j = 0; j < prcinfo.src.size(); j++) {
-                if(prcinfo.src.get(j).pageidx == i){
-                    srcremote = prcinfo.src.get(j);
-                    break;
-                }
-            }
-            if(srcremote==null)continue;
-            if(srcremote.btns==null)continue;
-            //按键使用位 初始
-            for (int j = 0; j < srcremote.btns.size(); j++) {
-                BtnInfo abtn = srcremote.btns.get(j);
-                if(abtn.gsno<0)continue;
-                if(abtn.params==null)continue;
-
-                int n = abtn.desidx;
-                if(n<0)continue;
-                if(n>=prcinfo.btns.size())continue;
-
-                IrButton abtn1 = new IrButton(i,prcinfo.btns.get(n).s, abtn.gsno, abtn.params); //第一个设备，pow按键
-                CfgData.desbuttons.add(abtn1);
-            }
-        }
-        int chip = CfgData.modellist.get(desidx).chip;
-        if(chip!=11) {
-            if (CfgData.desbuttons.size() < 2) {
-                showMessage("Error", "Err found,The selected buttons must be more than 2");
-                return false;
-            }
-        }
-        return true;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package clurc.net.longerir.activity;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ public class PrcAdjust extends BaseActivity {
     private int pagesel;
     private RemoteInfo srcremote = null;
     private boolean filechanged = false;
+    private boolean gocommnu = false;
     @Override
     public void getViewId() {
         layid = R.layout.activity_prc_adjust;
@@ -43,6 +46,7 @@ public class PrcAdjust extends BaseActivity {
     public void DoInit() {
         desidx = getIntent().getIntExtra("desidx", 0);
         pagesel = getIntent().getIntExtra("pagesel", -1);
+        gocommnu = getIntent().getBooleanExtra("gocommnu",false);
         DGViewNew = findViewById(R.id.vgv);
 
         List<DataModelBtnInfo> dmbtns =  MoudelFile.GetMBtns(instance,desidx,true);
@@ -81,7 +85,7 @@ public class PrcAdjust extends BaseActivity {
             // look for src info
             BtnInfo srcbtn=null;
             for (int j = 0; j < srcremote.btns.size(); j++) {
-                if(srcremote.btns.get(j).desidx == i){
+                if(srcremote.btns.get(j).prcidx == i){
                     srcbtn = srcremote.btns.get(j);
                     image.srcidx = j;
                     break;
@@ -95,8 +99,6 @@ public class PrcAdjust extends BaseActivity {
                 image.gsno = srcbtn.gsno;
                 image.params = srcbtn.params;
                 image.param16 = srcbtn.param16;
-            }else{
-                image.gsno = -1;
             }
             DGViewNew.addView(image);
         }
@@ -114,7 +116,14 @@ public class PrcAdjust extends BaseActivity {
                     public void onClick(View view) {
                         dosave();
                         filechanged = false;
-                        showMessage(getString(R.string.str_info),getString(R.string.str_save_ok));
+                        if(gocommnu){
+                            Intent intent = new Intent();
+                            intent.setClass(instance, PrcComuni.class);
+                            intent.putExtra("desidx",desidx);
+                            startActivity(intent);
+                        }else {
+                            showMessage(getString(R.string.str_info), getString(R.string.str_save_ok));
+                        }
                     }
                 });
     }
@@ -122,7 +131,7 @@ public class PrcAdjust extends BaseActivity {
     private void dosave(){
         if(srcremote==null)return;
         for (int j = 0; j < srcremote.btns.size(); j++) {
-            srcremote.btns.get(j).desidx = -1;
+            srcremote.btns.get(j).prcidx = -1;
         }
 
         for (int i = 0; i < DGViewNew.getChildCount(); i++) {
@@ -133,13 +142,14 @@ public class PrcAdjust extends BaseActivity {
             if(srcidx<0)continue;
             if(srcidx>=srcremote.btns.size())continue;
 
-            srcremote.btns.get(srcidx).desidx = i;
+            srcremote.btns.get(srcidx).prcidx = i;
         }
     }
 
     @Override
     public boolean DoBack(){
         if(filechanged==false)return true;
+        if(gocommnu)return true;
         new QMUIDialog.MessageDialogBuilder(instance)
                 .setTitle(getString(R.string.str_info))
                 .setMessage(getString(R.string.str_changed_save))

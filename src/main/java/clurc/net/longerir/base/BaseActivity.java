@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,13 +26,13 @@ import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 
-import clurc.net.longerir.data.IrButton;
+import clurc.net.longerir.BaseApplication;
+import clurc.net.longerir.data.BtnInfo;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,6 +40,7 @@ import clurc.net.longerir.MainActivity;
 import clurc.net.longerir.Utils.SysFun;
 import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.TxtBtnInfo;
+import clurc.net.longerir.ircommu.DesRemote;
 import clurc.net.longerir.uicomm.ItrUiThread;
 import clurc.net.longerir.R;
 import clurc.net.longerir.data.webHttpClientCom;
@@ -303,29 +303,51 @@ public class BaseActivity  extends AppCompatActivity {
         }
     }
 // rushing 发一个普通遥控器按键数据
+    public boolean RushingKey(BtnInfo abtn){
+        if(abtn.wave!=null && abtn.wave.length()>0){
+            CfgData.BtnWaveRet wavestru = CfgData.getWaveKey(abtn.wave);
+            if(wavestru.wave!=null)
+            {
+                int[] abswave = new int[wavestru.wave.length];
+                for (int i = 0; i < abswave.length; i++) {
+                    abswave[i] = Math.abs(wavestru.wave[i]);
+                }
+                dorushWave(abswave, wavestru.freq);
+                return true;
+            }
+        }
+        if(abtn.gsno>=0 && abtn.params!=null){
+            long[] mp = new long[abtn.params.length];
+            for (int i = 0; i < mp.length; i++) {
+                mp[i] = abtn.params[i] & 0xffffffff;
+            }
+            int[] wave = MainActivity.irGsGetData(mp, mp.length, abtn.gsno);//. LongerMain.getWavesByGsId(arush.gsno,arush.param);
+            if (wave!= null) {
+                dorushWave(wave, MainActivity.irGetCurrentFreq());
+                return true;
+            }
+        }
+        Toast.makeText(instance, "error ir data!", Toast.LENGTH_SHORT)
+                .show();
+        return false;
+    }
+
     public boolean RushingKey(TxtBtnInfo arush){
         if(arush==null){
             Toast.makeText(instance, "error ir data!", Toast.LENGTH_SHORT)
                     .show();
             return false;
         }
-        if(arush.gsno<0 || arush.param==null){
-            Toast.makeText(instance, "error ir data!", Toast.LENGTH_SHORT)
-                    .show();
-            return false;
+        if(arush.wave!=null && arush.wave.length>0){
+            int[] abswave = new int[arush.wave.length];
+            for (int i = 0; i < abswave.length; i++) {
+                abswave[i] = Math.abs(arush.wave[i]);
+            }
+            dorushWave(abswave,arush.freq);
+            return true;
         }
-        long[] mp= new long[arush.param.length];
-        for (int i = 0; i < mp.length; i++) {
-            mp[i] = arush.param[i]&0xffffffff;
-        }
-        int[] wave = MainActivity.irGsGetData(mp,arush.param.length,arush.gsno);//. LongerMain.getWavesByGsId(arush.gsno,arush.param);
-        if(wave==null){
-            Toast.makeText(instance, "error ir data!", Toast.LENGTH_SHORT)
-                    .show();
-            return false;
-        }
-        dorushWave(wave,MainActivity.irGetCurrentFreq());
-        return true;
+        BtnInfo viewInfo = CfgData.TransATextBtn(arush);
+        return RushingKey(viewInfo);
     }
 
     public boolean irpowerturx=false;
@@ -369,17 +391,9 @@ public class BaseActivity  extends AppCompatActivity {
         }
     }
 
-    public void getAudioData(List<IrButton> buttons,int remoteType,int remoteid,webHttpClientCom.WevEvent_SucData aev){
-        if(buttons.size()==0){
-            Toast.makeText(instance, "Err founded.Can not made PRC's data!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String s = CfgData.getButtonsString(buttons);
-        if (s == null) {
-            Toast.makeText(instance, "Err founded.Can not made PRC's data!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Log.w(TAG_SS,"===>eep sorce:"+s+";"+remoteType+",remoteid="+remoteid);
+    public void getAudioData(int remoteType,int remoteid,webHttpClientCom.WevEvent_SucData aev){
+        DesRemote prcinfo = BaseApplication.getMyApplication().getPrcinfo();
+        String s = CfgData.createPrcText(prcinfo);
         webHttpClientCom.getInstance(instance).RestkHttpCall("getAudioData?chip="+remoteType+"&force=0"+"&rmtid="+remoteid,s,"GET",aev);
     }
 

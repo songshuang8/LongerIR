@@ -20,9 +20,6 @@ import clurc.net.longerir.base.BaseActivity;
 import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.webHttpClientCom;
 
-import static clurc.net.longerir.data.webHttpClientCom.baseurl;
-import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
-
 public class SelectDesType extends BaseActivity {
     private int seldestype;
     @Override

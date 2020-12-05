@@ -152,11 +152,6 @@ public class SsSerivce {
     public void irReadInfo(){
         if(CfgData.selectIr==0)
             threadhid.setReadinfo(true);
-        else{
-            if(threadble.getMyblv()!=null){
-                threadble.getMyblv().readModelStr();
-            }
-        }
     }
 
     public void setRushing(int freq,int[] rushwave){

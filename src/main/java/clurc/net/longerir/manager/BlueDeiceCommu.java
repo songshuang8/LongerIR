@@ -104,17 +104,15 @@ public class BlueDeiceCommu {
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override //当连接上设备或者失去连接时会回调该函数
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            boolean bactive = false;
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 if(mBluetoothGatt==null){
                     Log.i(TAG_SS, "连接成功但为空");
                    return;
                 }
-                mConnectionState = BluetoothProfile.STATE_CONNECTED;
-                bactive = true;
-                Log.i(TAG_SS, "连接成功");
+                canconnect = false;
                 // Attempts to discover services after successful connection.
-                Log.i(TAG_SS, "开始发现服务" + gatt.discoverServices());
+                Log.i(TAG_SS, "开始发现服务");
+                gatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 mConnectionState = BluetoothProfile.STATE_DISCONNECTED;
                 Log.i(TAG_SS, "断开");
@@ -125,8 +123,8 @@ public class BlueDeiceCommu {
                 }
                 mdevice = null;
                 canconnect = true;
+                myBlueEvents.OnStateChanged(false);
             }
-            myBlueEvents.OnStateChanged(bactive);
         }
         //当设备是否找到服务时，会回调该函数
         @Override
@@ -163,6 +161,10 @@ public class BlueDeiceCommu {
                 }
                 char_byte8 = BluebleUtils.getCharacterics(gatt,UUID.fromString(BluebleUtils.SSBLE_SERVER),UUID.fromString(BluebleUtils.SSBLE_CHARI_BYTE8));
                 char_modestr = BluebleUtils.getCharacterics(gatt,UUID.fromString(BluebleUtils.SSBLE_MODESERVER),UUID.fromString(BluebleUtils.SSBLEUUID_ModelStr));
+//
+                mConnectionState = BluetoothProfile.STATE_CONNECTED;
+                myBlueEvents.OnStateChanged(true);
+                Log.i(TAG_SS, "连接成功");
             } else {
                 Log.w(TAG_SS, "DisCover 失败" + status);
             }
@@ -228,55 +230,7 @@ public class BlueDeiceCommu {
         }
     };
 
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
-                @Override
-                public void onLeScan(final BluetoothDevice device, final int rssi, byte[] scanRecord) {
-                    mdevice =device;
-                    Log.w(TAG_SS,"扫描到设备");
-                    bluetoothAdapter.stopLeScan(mLeScanCallback);
-                    reconnect();
-                }
-            };
-
-    private void reconnect(){
-        if(canconnect == false)return;
-//        if (mBluetoothGatt != null) {
-//            Log.d(TAG_SS,"存在的进行连接");
-//            if (mBluetoothGatt.connect()) {
-//                mConnectionState = STATE_CONNECTING;
-//                canconnect = false;
-//                return;
-//            } else {
-//                return;
-//            }
-//        }
-        //检查配对
-        int bondstate = mdevice.getBondState();
-        if (bondstate == BluetoothDevice.BOND_NONE) {
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(BluetoothDevice.ACTION_PAIRING_REQUEST);
-            intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-            context.registerReceiver(bluePareiEvent,intentFilter);
-            try {
-                //利用反射方法调用BluetoothDevice.createBond(BluetoothDevice remoteDevice);
-                Method createBondMethod = BluetoothDevice.class.getMethod("createBond");
-                Log.d(TAG_SS, "开始配对");
-                Boolean returnValue = (Boolean) createBondMethod.invoke(mdevice);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }else {
-            // We want to directly connect to the device, so we are setting the
-            // autoConnect
-            // parameter to false.
-            mBluetoothGatt = mdevice.connectGatt(context, false, mGattCallback); //该函数才是真正的去进行连接
-            Log.d(TAG_SS, "创建新连接");
-            mConnectionState = STATE_CONNECTING;
-            canconnect = false;
-        }
-    }
-
+    private boolean isbangding = false;
     public void connect() {
         if(canconnect == false){
             Log.w(TAG_SS,"不需要连接");
@@ -286,22 +240,41 @@ public class BlueDeiceCommu {
             //Log.w(TAG_SS,"蓝牙适配器为空");
             return;
         }
-        // Previously connected device. Try to reconnect. (先前连接的设备。 尝试重新连接)
-//        bluetoothAdapter.stopLeScan(mLeScanCallback);
-//        if (mdevice == null) {
-//           // Log.w(TAG_SS, "Device Scan.");
-//            UUID[] idarr = new UUID[1];
-//            idarr[0] = UUID.fromString(BluebleUtils.SSBLE_SERVER);
-//            bluetoothAdapter.startLeScan(idarr,mLeScanCallback);
-//            return;
-//        }
         mdevice = bluetoothAdapter.getRemoteDevice(BluebleUtils.CON_DEV_MAC);
         if (mdevice == null) {
             Log.w(TAG_SS, "Device not found.  Unable to connect.");
             return;
         }
         //检查配对
-        reconnect();
+        int bondstate = mdevice.getBondState();
+        if (bondstate == BluetoothDevice.BOND_NONE) {
+            if(isbangding)return;
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(BluetoothDevice.ACTION_PAIRING_REQUEST);
+            intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+            context.registerReceiver(bluePareiEvent,intentFilter);
+            try {
+                //利用反射方法调用BluetoothDevice.createBond(BluetoothDevice remoteDevice);
+                Method createBondMethod = BluetoothDevice.class.getMethod("createBond");
+                Log.d(TAG_SS, "开始配对");
+                Boolean returnValue = (Boolean) createBondMethod.invoke(mdevice);
+                isbangding = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else {
+            if(mBluetoothGatt!=null) {
+                mBluetoothGatt.disconnect();
+                mBluetoothGatt.close();
+            }
+            mBluetoothGatt = mdevice.connectGatt(context, false, mGattCallback); //该函数才是真正的去进行连接
+            if(mBluetoothGatt==null) {
+                return;
+            }
+            Log.d(TAG_SS, "连接。。。");
+            mConnectionState = STATE_CONNECTING;
+            //canconnect = false;
+        }
     }
 
     public void disconnect() {
@@ -343,18 +316,22 @@ public class BlueDeiceCommu {
                 } else {
                     device.createBond();
                 }
+                isbangding = true;
             }else if(BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)){
                 device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 switch (device.getBondState()) {
                     case BluetoothDevice.BOND_BONDING:
                         Log.d(TAG_SS, "正在配对......");
+                        isbangding = true;
                         break;
                     case BluetoothDevice.BOND_BONDED:
                         Log.d(TAG_SS,"完成配对");
                         context.unregisterReceiver(bluePareiEvent);
+                        isbangding = false;
                         break;
                     case BluetoothDevice.BOND_NONE:
                         Log.d(TAG_SS, "取消配对");
+                        isbangding = false;
                     default:
                         break;
                 }

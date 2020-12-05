@@ -8,10 +8,6 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import java.util.ArrayList;
 import java.util.List;
 
-import clurc.net.longerir.Utils.MoudelFile;
-import clurc.net.longerir.data.BtnModelData;
-import clurc.net.longerir.data.CfgData;
-import clurc.net.longerir.data.IrButton;
 import clurc.net.longerir.ircommu.DesRemote;
 import clurc.net.longerir.manager.QDSkinManager;
 

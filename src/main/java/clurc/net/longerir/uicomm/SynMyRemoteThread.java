@@ -104,7 +104,7 @@ public class SynMyRemoteThread extends Thread{
         if(remote.isAc!=CfgData.AcPro) {
             int validcount = 0;
             for (int i = 0; i < btnlist.size(); i++) {
-                if (btnlist.get(i).gsno >= 0) validcount++;
+                if (CfgData.BtnHasIr(btnlist.get(i)))validcount++;
             }
             if (validcount < 2) {
                 return;

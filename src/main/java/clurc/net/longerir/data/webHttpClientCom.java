@@ -42,7 +42,7 @@ import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
 public class webHttpClientCom {
     private Activity context;
     public static String baseurl = "https://data.clurc.net/root/";
-    //private static String baseurl = "http://192.168.1.8:65500/root/";
+    //public static String baseurl = "http://192.168.1.8:65500/root/";
     public static final int CONN_TIMEOUT = 60;
     public static final int READ_TIMEOUT = 60;
     public static final int WRITE_TIMEOUT = 6;
@@ -370,7 +370,7 @@ public class webHttpClientCom {
         if(remote.isAc!=CfgData.AcPro){
             int validcount = 0;
             for (int i = 0; i < btnlist.size(); i++) {
-                if (btnlist.get(i).gsno >= 0) validcount++;
+                if(CfgData.BtnHasIr(btnlist.get(i)))validcount++;
             }
             if (validcount < 2) {
                 return -1;
