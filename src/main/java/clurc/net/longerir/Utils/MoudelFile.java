@@ -1,6 +1,7 @@
 package clurc.net.longerir.Utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.util.QMUILangHelper;
@@ -24,6 +25,8 @@ import clurc.net.longerir.data.modeldata.DataModelBtnInfo;
 import clurc.net.longerir.ircommu.DesRemote;
 import clurc.net.longerir.ircommu.DesRemoteBtn;
 
+import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
+
 public class MoudelFile {
     public static int Con_Ac_Chip = 11;
     public static String getModeFile(Context context){
@@ -45,6 +48,8 @@ public class MoudelFile {
     public static boolean isExist(Context context){
         String filename = getModeFile(context);
         File modfile = new File(filename);
+        if(!modfile.exists())
+            Log.w(TAG_SS,"===>model file not exist ");
         return modfile.exists();
     }
 
@@ -65,6 +70,8 @@ public class MoudelFile {
                 astru.id = jsonsingle.getInt("ModelID");
                 astru.prgtype = jsonsingle.getInt("PrgType");
                 astru.hasShift = (jsonsingle.getInt("HasShift")==1)?true:false;
+                astru.guest = jsonsingle.getInt("guest");
+                astru.pri = (jsonsingle.getInt("pri")==1)?true:false;
                 JSONArray jpage = (JSONArray)jsonsingle.get("PageName");
                 astru.pageName = new String[jpage.length()];
                 astru.imageCount = jsonsingle.getInt("ImageCount");
@@ -163,6 +170,8 @@ public class MoudelFile {
         public int chip;
         public String[] pageName;
         public int imageCount;
+        public int guest;
+        public boolean pri;
 
         public ModelStru() {
         }

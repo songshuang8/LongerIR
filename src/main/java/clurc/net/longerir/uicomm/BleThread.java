@@ -28,12 +28,14 @@ public class BleThread extends Thread{
 
     private volatile boolean blvcomCancel = false;
     private volatile boolean learning = false;
+    private volatile boolean canconnect;
 
     public void init(Context actx){
         Log.i(TAG_SS, "创建BLE对象");
         this.ctx = actx;
         BlueDeiceCommu.getInstance().setInit(ctx);
         BlueDeiceCommu.getInstance().setOnMyBlueEvents(blvevents);
+        canconnect = true;
     }
 
     private static BleThread instance=null;
@@ -45,6 +47,7 @@ public class BleThread extends Thread{
     }
 
     public void uninit(){
+        canconnect = false;
         BlueDeiceCommu.getInstance().disconnect();
     }
 
@@ -52,9 +55,10 @@ public class BleThread extends Thread{
         boolean currlearstate = false;
         while(!isInterrupted()){
             try {
-                BlueDeiceCommu.getInstance().connect();
+                if(canconnect)
+                    BlueDeiceCommu.getInstance().connect();
                 if(BlueDeiceCommu.getInstance().getintConnectionState() != BluetoothProfile.STATE_CONNECTED){
-                    Thread.sleep(2000);
+                    Thread.sleep(200);
                     continue;
                 }
                 mevents.OnStateChanged(false);

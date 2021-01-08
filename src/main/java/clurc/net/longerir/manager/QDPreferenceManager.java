@@ -30,6 +30,9 @@ public class QDPreferenceManager {
     private static final String APP_seldes = "app_seldes";
     private static final String APP_database = "app_database";
 
+    private static final String APP_FavId = "favmodel";
+    private static final int APP_FavMax = 4;
+
     private QDPreferenceManager(Context context) {
         sPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
@@ -163,11 +166,15 @@ public class QDPreferenceManager {
        return ret;
    }
 
-    public void AppendSearchHis(String s) {
-        List<String> ret = getSearHis();
-        ret.remove(s);
-        ret.add(0,s);
-
+    public void AppendSearchHis(String sr) {
+        List<String> ret = new ArrayList<String>();
+        for (int i = 0; i < APP_SearchStrMax; i++) {
+            String s = sPreferences.getString(APP_SearchStr+i,"");
+            if(s.length()==0)break;
+            if(s.equalsIgnoreCase(sr))continue;
+            ret.add(s);
+        }
+        ret.add(0,sr);
         SharedPreferences.Editor editor = sPreferences.edit();
         for (int i = 0; i < ret.size(); i++) {
             if(i>=APP_SearchStrMax)break;
@@ -180,6 +187,37 @@ public class QDPreferenceManager {
         SharedPreferences.Editor editor = sPreferences.edit();
         for (int i = 0; i < APP_SearchStrMax; i++) {
             editor.putString(APP_SearchStr+i, "");
+        }
+        editor.apply();
+    }
+
+    // -----------fav prg array
+    public List<String> getFavHis() {
+        List<String> ret = new ArrayList<String>();
+        for (int i = 0; i < APP_FavMax; i++) {
+            int modid = sPreferences.getInt(APP_FavId+i,-1);
+            if(modid<0)break;
+            String remotename = CfgData.getMougleName(modid);
+            if(remotename==null)break;
+            if(remotename.length()<1)break;
+            ret.add(remotename);
+        }
+        return ret;
+    }
+
+    public void AppendFavRemote(int id) {
+        List<Integer> ret = new ArrayList<Integer>();
+        for (int i = 0; i < APP_FavMax; i++) {
+            int modid = sPreferences.getInt(APP_FavId+i,-1);
+            if(modid<0)break;
+            if(modid==id)continue;
+            ret.add(modid);
+        }
+        ret.add(0,id);
+        SharedPreferences.Editor editor = sPreferences.edit();
+        for (int i = 0; i < ret.size(); i++) {
+            if(i>=APP_FavMax)break;
+            editor.putInt(APP_FavId+i, ret.get(i));
         }
         editor.apply();
     }

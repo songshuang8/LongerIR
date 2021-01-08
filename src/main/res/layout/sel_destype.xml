@@ -18,24 +18,53 @@
         android:background="@color/qmui_config_color_white"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
-        android:padding="4dp">
+        android:paddingLeft="2dp">
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="4dp"
             android:gravity="center"
             android:text="@string/str_sel_kinds"
-            android:textSize="30sp" />
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:id="@+id/pnlfav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/favtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                android:text="History" />
+
+            <ListView
+                android:id="@+id/listfav"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusableInTouchMode="false"
+                android:paddingLeft="24dp" />
+        </LinearLayout>
 
         <ListView
             android:id="@+id/listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="4dp"
             android:focusableInTouchMode="true" />
 
+        <TextView
+            android:id="@+id/modelearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:text="@string/str_search" />
     </LinearLayout>
 
 </LinearLayout>

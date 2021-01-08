@@ -434,29 +434,5 @@ public class MainActivity extends AppCompatActivity {
         return  true;
     }
 
-    private boolean copyFileToFiles(String srcname,String desname){
-        if (new File(desname).exists()){
-            return true;
-        }
-        FileOutputStream fos;
-        try{
-            fos = new FileOutputStream(desname);
-        }catch(FileNotFoundException e){
-            Log.e("IR_Data", "can't create FileOutputStream");
-            return false;
-        }
-        try {
-            FileInputStream is = new FileInputStream(srcname);
-            byte[] buffer = new byte[1024];
-            int count = 0;
-            while ((count = is.read(buffer)) > 0) {
-                fos.write(buffer, 0, count);
-            }
-            fos.close();
-            is.close();
-        } catch (Exception e) {
-            Log.e("DB_ERROR", "数据文件读写失败");
-        }
-        return  true;
-    }
+
 }

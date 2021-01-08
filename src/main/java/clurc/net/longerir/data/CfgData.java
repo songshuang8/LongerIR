@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.qmuiteam.qmui.util.QMUILangHelper;
 
@@ -809,6 +810,7 @@ public class CfgData {
     //根据遥控器ID，获取名称
     public static String getMougleName(int id){
         String ret = null;
+        if(modellist==null)return null;
         for (int i = 0; i < modellist.size(); i++) {
             if(modellist.get(i).id==id){
                 ret = modellist.get(i).name;
@@ -1108,6 +1110,28 @@ public class CfgData {
         }
         if(olddata!=CfgData.dataidx && clearche){
             BaseApplication.getMyApplication().ClearRemoteCache();
+        }
+    }
+
+    public static void copyFileToFiles(String srcname,String desname){
+        FileOutputStream fos;
+        try{
+            fos = new FileOutputStream(desname);
+        }catch(FileNotFoundException e){
+            Log.e("IR_Data", "can't create FileOutputStream");
+            return;
+        }
+        try {
+            FileInputStream is = new FileInputStream(srcname);
+            byte[] buffer = new byte[1024];
+            int count = 0;
+            while ((count = is.read(buffer)) > 0) {
+                fos.write(buffer, 0, count);
+            }
+            fos.close();
+            is.close();
+        } catch (Exception e) {
+            Log.e("DB_ERROR", "数据文件读写失败");
         }
     }
 }

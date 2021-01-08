@@ -76,6 +76,8 @@ public class SelectDesRemote extends BaseActivity {
         selecttype = getIntent().getIntExtra("iseltype",-1);
         for (int i = 0; i < CfgData.modellist.size(); i++) {
             if(CfgData.modellist.get(i).prgtype!=0)continue;
+            if(CfgData.modellist.get(i).guest!=0)continue;
+            if(CfgData.modellist.get(i).pri)continue;
             int chipint = CfgData.modellist.get(i).chip;
 
             if(selecttype<0){ // -1 普通非空调遥控器

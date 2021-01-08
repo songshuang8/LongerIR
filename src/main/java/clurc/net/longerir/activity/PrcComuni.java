@@ -214,7 +214,7 @@ public class PrcComuni extends BaseActivity {
                 break;
             case SsSerivce.BROD_CMDUI_BLUEMODEL:
                 String modelstr = (String) intent.getSerializableExtra("model");
-                PrepareDataAndDown(10);
+                //PrepareDataAndDown(10);
                 break;
             default:
                 break;

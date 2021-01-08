@@ -20,14 +20,7 @@ import clurc.net.longerir.data.CfgData;
 import clurc.net.longerir.data.IrPrcDownComm;
 import clurc.net.longerir.data.RemoteInfo;
 import clurc.net.longerir.data.webHttpClientCom;
-import clurc.net.longerir.ircommu.BleLearData;
-import clurc.net.longerir.ircommu.MadeBleRushData;
-import clurc.net.longerir.manager.BlueDeiceCommu;
-
-import static clurc.net.longerir.manager.UiUtils.getString;
-import static clurc.net.longerir.uicomm.SsSerivce.BROD_CMDUI_BLUEMODEL;
 import static clurc.net.longerir.uicomm.SsSerivce.TAG_SS;
-import static clurc.net.longerir.uicomm.SsSerivce.brod_ui;
 
 public class SynMyRemoteThread extends Thread{
     private Context ctx;

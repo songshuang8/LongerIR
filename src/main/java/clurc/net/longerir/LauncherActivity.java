@@ -69,11 +69,13 @@ public class LauncherActivity extends Activity {
     }
 
     private void getModelData(){
-        String filename = MoudelFile.getModeFile(this); //手机存储地址
+        String filename = getFilesDir().getAbsolutePath() + "/remotemod_tmp";;
         webHttpClientCom.getInstance(this).BackHttpGetFile(webHttpClientCom.baseurl+"mod_export?flag=0", filename,new webHttpClientCom.OnDownEventer() {
             @Override
             public void onSuc(final String file) {
                 Log.w(TAG_SS,"===>get model file ok ");
+                String trufile = MoudelFile.getModeFile(LauncherActivity.this);
+                CfgData.copyFileToFiles(filename,trufile);
                 CfgData.modellist = MoudelFile.getMoudleArr(LauncherActivity.this);
                 // 从下载的mod文件抽取保存到用户模板里面
                 BtnModelData.SaveMdFromMoudel(LauncherActivity.this);
